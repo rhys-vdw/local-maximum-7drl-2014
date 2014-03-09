@@ -96,7 +96,7 @@ public class JoystickInputMapping : ExtendedMonoBehaviour, IInputMapping
     {
         return new Vector2(
             m_Wrapper.GetAxis( (int) Axis.LeftX ),
-            m_Wrapper.GetAxis( (int) Axis.LeftY )
+            -m_Wrapper.GetAxis( (int) Axis.LeftY )
         );
     }
 
@@ -104,7 +104,7 @@ public class JoystickInputMapping : ExtendedMonoBehaviour, IInputMapping
     {
         return new Vector2(
             m_Wrapper.GetAxis( (int) Axis.RightX ),
-            m_Wrapper.GetAxis( (int) Axis.RightY )
+            -m_Wrapper.GetAxis( (int) Axis.RightY )
         );
     }
 

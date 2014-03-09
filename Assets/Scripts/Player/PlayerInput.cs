@@ -5,6 +5,35 @@ public class PlayerInput : ExtendedMonoBehaviour
 {
     IInputMapping m_InputMapping;
 
+    // API.
+
+    public bool GetKeyDown( PlayerKey key )
+    {
+        return m_InputMapping == null ? false : m_InputMapping.GetKeyDown( key );
+    }
+
+    public bool GetKey( PlayerKey key )
+    {
+        return m_InputMapping == null ? false : m_InputMapping.GetKey( key );
+    }
+
+    public bool GetKeyUp( PlayerKey key )
+    {
+        return m_InputMapping == null ? false : m_InputMapping.GetKeyUp( key );
+    }
+
+    public Vector2 Movement()
+    {
+        return m_InputMapping == null ? Vector2.zero : m_InputMapping.Movement();
+    }
+
+    public Vector2 Aim()
+    {
+        return m_InputMapping == null ? Vector2.zero : m_InputMapping.Aim();
+    }
+
+    // Unity events.
+
     void OnEnable()
     {
         var player = Component<Player>();
