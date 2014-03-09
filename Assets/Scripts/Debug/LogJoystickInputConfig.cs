@@ -22,9 +22,9 @@ public class LogJoystickInputConfig : MonoBehaviour
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1000
+    gravity: 0
     dead: {2}
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
