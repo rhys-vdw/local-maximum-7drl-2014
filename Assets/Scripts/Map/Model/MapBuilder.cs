@@ -14,6 +14,10 @@ public class MapBuilder : MonoBehaviour
     // Cached components.
     Transform m_Transform;
 
+    // Children.
+    Transform m_TileParent;
+    Transform m_FeatureParent;
+
     // Scene objects.
     PlayerStartFactory m_PlayerStartFactory;
 
@@ -21,6 +25,14 @@ public class MapBuilder : MonoBehaviour
     {
         m_Transform = GetComponent<Transform>();
         m_PlayerStartFactory = Scene.Object<PlayerStartFactory>();
+
+        m_TileParent = new GameObject( "Tiles" ).transform;
+        m_TileParent.parent = m_Transform;
+        m_TileParent.localPosition = Vector3.zero;
+
+        m_FeatureParent = new GameObject( "Features" ).transform;
+        m_FeatureParent.parent = m_Transform;
+        m_FeatureParent.localPosition = Vector3.zero;
     }
 
     public void Build( Map map )
@@ -34,7 +46,9 @@ public class MapBuilder : MonoBehaviour
                 var prefab = TilePrefab( map.Tiles[x, y] );
                 if( prefab != null )
                 {
-                    m_Tiles[x, y] = InstantiateAtPoint( prefab, x, y );
+                    var tile = InstantiateAtPoint( prefab, x, y );
+                    tile.parent = m_TileParent;
+                    m_Tiles[x, y] = tile;
                 }
             }
         }
@@ -65,16 +79,21 @@ public class MapBuilder : MonoBehaviour
         );
     }
 
-    Transform AddFeature( FeatureType feature, Vector3 position )
+    Transform AddFeature( FeatureType featureType, Vector3 position )
     {
-        if( feature == FeatureType.Player0Start ) return m_PlayerStartFactory.Build( 0, position );
-        if( feature == FeatureType.Player1Start ) return m_PlayerStartFactory.Build( 1, position );
-        if( feature == FeatureType.Player2Start ) return m_PlayerStartFactory.Build( 2, position );
-        if( feature == FeatureType.Player3Start ) return m_PlayerStartFactory.Build( 3, position );
+        var feature = 
+            ( featureType == FeatureType.Player0Start ) ? m_PlayerStartFactory.Build( 0, position ) :
+            ( featureType == FeatureType.Player1Start ) ? m_PlayerStartFactory.Build( 1, position ) :
+            ( featureType == FeatureType.Player2Start ) ? m_PlayerStartFactory.Build( 2, position ) :
+            ( featureType == FeatureType.Player3Start ) ? m_PlayerStartFactory.Build( 3, position ) :
+            null;
 
-        throw new InvalidOperationException( string.Format(
+        if( feature == null ) throw new InvalidOperationException( string.Format(
             "Unrecognized feature type: {0}", feature
         ) );
+
+        feature.parent = m_FeatureParent;
+        return feature;
     }
 
     Transform TilePrefab( TileType tile )
