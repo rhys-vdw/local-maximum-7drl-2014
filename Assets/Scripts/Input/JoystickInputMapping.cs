@@ -31,8 +31,8 @@ public class JoystickInputMapping : ExtendedMonoBehaviour, IInputMapping
         RightY = 4,
         DPadX = 5,
         DPadY = 6,
-        LeftTrigger = 7,
-        RightTrigger = 8
+        LeftTrigger = 8,
+        RightTrigger = 9
     }
 
     enum KeyState
@@ -161,20 +161,20 @@ public class JoystickInputMapping : ExtendedMonoBehaviour, IInputMapping
         foreach( var mapping in VirtualKeyMapping )
         {
             var currentState = m_VirtualKeyStates[ mapping.Key ];
-            var isDown = m_Wrapper.GetAxis( (int) mapping.Value ) > 0;
+            var isDown = m_Wrapper.GetAxis( (int) mapping.Value ) > 0f;
 
             KeyState newState;
             if( isDown )
             {
-                newState = currentState == KeyState.Down ?
-                    KeyState.Held :
-                    KeyState.Down;
+                newState = currentState == KeyState.Down
+                    ? KeyState.Held
+                    : KeyState.Down;
             }
             else
             {
-                newState = currentState == KeyState.Up ?
-                    KeyState.None :
-                    KeyState.Up;
+                newState = currentState == KeyState.Held || currentState == KeyState.Down
+                    ? KeyState.Up
+                    : KeyState.None;
             }
             m_VirtualKeyStates[ mapping.Key ] = newState;
         }
