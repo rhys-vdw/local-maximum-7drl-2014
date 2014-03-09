@@ -23,6 +23,7 @@ public class MapBuilder : MonoBehaviour
 
     // Scene objects.
     PlayerStartFactory m_PlayerStartFactory;
+    TileFactory m_TileFactory;
 
     public float Width
     {
@@ -38,6 +39,7 @@ public class MapBuilder : MonoBehaviour
     {
         m_Transform = GetComponent<Transform>();
         m_PlayerStartFactory = Scene.Object<PlayerStartFactory>();
+        m_TileFactory = Scene.Object<TileFactory>();
 
         m_TileParent = new GameObject( "Tiles" ).transform;
         m_TileParent.parent = m_Transform;
@@ -48,6 +50,28 @@ public class MapBuilder : MonoBehaviour
         m_FeatureParent.localPosition = Vector3.zero;
     }
 
+    TileType[,] CopyMask( TileType[,] source, int x, int y)
+    {
+        x--;
+        y--;
+        
+        TileType[,] mask = new TileType[3,3];
+        int startX = Mathf.Max( 0, x );
+        int startY = Mathf.Max( 0, y );
+        int endX = Mathf.Min( source.GetLength( 0 ), x + 3 );
+        int endY = Mathf.Min( source.GetLength( 1 ), y + 3 );
+
+        for( int u = startX; u < endX; u++ )
+        {
+            for( int v = startY; v < endY; v++ )
+            {
+                mask[u - x, v - y] = source[ u, v ];
+            }
+        }
+
+        return mask;
+    }
+
     public void Build( Map map )
     {
         m_Tiles = new Transform[map.Width, map.Height];
@@ -56,13 +80,11 @@ public class MapBuilder : MonoBehaviour
         {
             for( int x = 0; x < map.Width; x++ )
             {
-                var prefab = TilePrefab( map.Tiles[x, y] );
-                if( prefab != null )
-                {
-                    var tile = InstantiateAtPoint( prefab, x, y );
-                    tile.parent = m_TileParent;
-                    m_Tiles[x, y] = tile;
-                }
+                var mask = CopyMask( map.Tiles, x, y );
+                var tile = m_TileFactory.Build( "" + y + "," + x, mask );
+                tile.position = Position( x, y );
+                tile.parent = m_TileParent;
+                m_Tiles[x, y] = tile;
             }
         }
 

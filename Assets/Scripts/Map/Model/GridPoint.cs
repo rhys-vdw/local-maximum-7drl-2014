@@ -1,3 +1,4 @@
+[System.Serializable]
 public struct GridPoint
 {
     public int X;

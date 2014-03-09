@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
         var builder = Scene.Object<MapBuilder>();
 
         var map = generator.GenerateMap( MapGenerationOptions );
+        Debug.Log( map.ToVisualString() );
         builder.Build( map );
 
         StartIntro();

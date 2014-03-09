@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 public struct GridFeature
 {
@@ -27,5 +28,25 @@ public class Map
     public int Height
     {
         get { return Tiles.GetLength( 1 ); }
+    }
+
+    public string ToVisualString()
+    {
+        var builder = new StringBuilder();
+
+        for( int y = 0; y < Tiles.GetLength( 1 ); y++ )
+        {
+            for( int x = 0; x < Tiles.GetLength( 0 ); x++ )
+            {
+                builder.Append(
+                    Tiles[x,y] == TileType.Blocked ? '#' :
+                    Tiles[x,y] == TileType.Floor   ? '.' :
+                    'X'
+                );
+            }
+            builder.Append( '\n' );
+        }
+
+        return builder.ToString();
     }
 }

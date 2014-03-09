@@ -24,8 +24,8 @@ public class CameraController : ExtendedMonoBehaviour
     {
         m_Camera.orthographic = true;
         m_Camera.orthographicSize =
-            (map.Width * m_Camera.pixelHeight) /
-            (2 * Screen.width);
+            (map.Width * m_Camera.pixelHeight * m_Camera.rect.height) /
+            (2 * Screen.width * m_Camera.rect.width);
 
         m_Transform.position = map.transform.position + new Vector3(
             (map.Width - 1) / 2,
