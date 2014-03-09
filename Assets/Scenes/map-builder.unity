@@ -74,6 +74,48 @@ NavMeshSettings:
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
   m_NavMesh: {fileID: 0}
+--- !u!1 &146408359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 146408361}
+  - 114: {fileID: 146408360}
+  m_Layer: 0
+  m_Name: Config Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &146408360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 146408359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 513d7d7f486e0ee45b60601387c9c761, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ControlTypes: 02000000030000000400000005000000
+  MapGenerationOptions:
+    Width: 24
+    Height: 100
+--- !u!4 &146408361
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 146408359}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.2032218, y: -2.28935051, z: 71.4208221}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
 --- !u!1 &159348225
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,9 +564,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 505501af8ec1f7045ba6a47421f6242a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapGenerationOptions:
-    Width: 24
-    Height: 100
 --- !u!4 &1827870066
 Transform:
   m_ObjectHideFlags: 0

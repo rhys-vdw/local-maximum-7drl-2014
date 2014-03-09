@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityObjectRetrieval;
 
 public class PlayerStartFactory : MonoBehaviour
 {
@@ -8,9 +9,10 @@ public class PlayerStartFactory : MonoBehaviour
     {
         var start = Instantiate( PlayerStartPrefab, position, Quaternion.identity ) as PlayerStart;
 
-        // TODO: Load config from GameConfigManager
+        var config = Scene.Object<ConfigManager>();
+
         start.Config.PlayerNumber = playerNumber;
-        start.Config.ControlType = ControlType.Joystick1;
+        start.Config.ControlType = config.ControlTypes[playerNumber];
 
         return start.transform;
     }

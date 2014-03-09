@@ -14,11 +14,6 @@ public enum GameState
 
 public class GameManager : MonoBehaviour
 {
-    public MapGenerationOptions MapGenerationOptions = new MapGenerationOptions {
-        Width = 24,
-        Height = 100
-    };
-
     public EventMap<GameState> EnterStateEventMap = new EventMap<GameState>();
     public EventMap<GameState> ExitStateEventMap = new EventMap<GameState>();
 
@@ -52,7 +47,8 @@ public class GameManager : MonoBehaviour
         var generator = Scene.Object<MapGenerator>();
         var builder = Scene.Object<MapBuilder>();
 
-        var map = generator.GenerateMap( MapGenerationOptions );
+        var genOptions = Scene.Object<ConfigManager>().MapGenerationOptions;
+        var map = generator.GenerateMap( genOptions );
         Debug.Log( map.ToVisualString() );
         builder.Build( map );
 
