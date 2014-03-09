@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using EventTools;
 
 public class Player : MonoBehaviour
 {
-    PlayerConfig m_Config;
-    public event Action<PlayerConfig> ConfigureEvent;
+    public Watchable<PlayerConfig> Config;
 
     public void Configure( PlayerConfig config )
     {
-        m_Config = config;
-        if( ConfigureEvent != null ) ConfigureEvent( config );
+        Config.Value = config;
     }
 }

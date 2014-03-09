@@ -112,15 +112,15 @@ public class JoystickInputMapping : ExtendedMonoBehaviour, IInputMapping
 
     void Awake()
     {
-        Component<Player>().ConfigureEvent += HandleConfigure;
-
-        // Disable until we get the callback.
+        // Disable until we hear back from config.
         this.enabled = false;
+
+        Component<Player>().Config.Watch( HandleConfigure );
     }
 
     void OnDestroy()
     {
-        Component<Player>().ConfigureEvent -= HandleConfigure;
+        Component<Player>().Config.Unwatch( HandleConfigure );
     }
 
     void HandleConfigure( PlayerConfig config )

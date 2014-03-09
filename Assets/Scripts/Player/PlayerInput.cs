@@ -5,10 +5,10 @@ public class PlayerInput : ExtendedMonoBehaviour
 {
     IInputMapping m_InputMapping;
 
-    public void Awake()
+    void OnEnable()
     {
         var player = Component<Player>();
-        player.ConfigureEvent += HandleConfigure;
+        player.Config.Watch( HandleConfigure );
     }
 
     void HandleConfigure( PlayerConfig config )
@@ -19,7 +19,7 @@ public class PlayerInput : ExtendedMonoBehaviour
             case ControlType.Joystick2:
             case ControlType.Joystick3:
             case ControlType.Joystick4:
-                m_InputMapping = Component<JoystickInputMapping>();
+                m_InputMapping = gameObject.AddComponent<JoystickInputMapping>();
                 break;
             default:
                 throw new System.InvalidOperationException( string.Format(
