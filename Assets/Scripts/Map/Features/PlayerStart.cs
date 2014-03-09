@@ -9,15 +9,19 @@ public class PlayerStart : MonoBehaviour
 
     GameManager m_GameManager;
 
-    void OnEnable()
+    void Awake()
     {
         m_GameManager = Scene.Object<GameManager>();
-        m_GameManager.StartIntroEvent += HandleStartIntro;
+    }
+
+    void OnEnable()
+    {
+        m_GameManager.EnterStateEventMap.AddHandler( GameState.Intro, HandleStartIntro );
     }
 
     void OnDisable()
     {
-        m_GameManager.StartIntroEvent -= HandleStartIntro;
+        m_GameManager.EnterStateEventMap.RemoveHandler( GameState.Intro, HandleStartIntro );
     }
 
     void HandleStartIntro()

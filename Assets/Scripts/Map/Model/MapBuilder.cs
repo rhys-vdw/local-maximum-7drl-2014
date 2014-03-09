@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityObjectRetrieval;
+using System;
 using InvalidOperationException = System.InvalidOperationException;
 
 public class MapBuilder : MonoBehaviour
 {
     public Transform WallPrefab;
     public Transform FloorPrefab;
+
+    public event Action<MapBuilder> BuildCompleteEvent;
 
     Transform[,] m_Tiles;
     readonly Vector3 TileSize = new Vector3( 1f, 0f, 1f );
@@ -20,6 +23,16 @@ public class MapBuilder : MonoBehaviour
 
     // Scene objects.
     PlayerStartFactory m_PlayerStartFactory;
+
+    public float Width
+    {
+        get { return m_Tiles.GetLength( 0 ) * TileSize.x; }
+    }
+
+    public float Length
+    {
+        get { return m_Tiles.GetLength( 1 ) * TileSize.z; }
+    }
 
     void Awake()
     {
@@ -57,6 +70,8 @@ public class MapBuilder : MonoBehaviour
         {
             AddFeature( featurePoint.Feature, Position( featurePoint.Point ) );
         }
+
+        if( BuildCompleteEvent != null ) BuildCompleteEvent( this );
     }
 
     Transform InstantiateAtPoint( Transform tilePrefab, int x, int y )

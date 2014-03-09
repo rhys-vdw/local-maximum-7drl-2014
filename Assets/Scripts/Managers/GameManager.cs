@@ -2,16 +2,15 @@ using UnityEngine;
 using UnityObjectRetrieval;
 using IEnumerator = System.Collections.IEnumerator;
 using System;
+using EventTools;
 
-/*
-public enum State
+public enum GameState
 {
     None,
     Generating,
     Intro,
-    Playing,
+    Playing
 }
-*/
 
 public class GameManager : MonoBehaviour
 {
@@ -20,7 +19,20 @@ public class GameManager : MonoBehaviour
         Height = 100
     };
 
-    public event Action StartIntroEvent;
+    public EventMap<GameState> EnterStateEventMap = new EventMap<GameState>();
+    public EventMap<GameState> ExitStateEventMap = new EventMap<GameState>();
+
+    GameState m_State;
+
+    void SetState( GameState state )
+    {
+        if( state != m_State )
+        {
+            ExitStateEventMap.FireEvent( m_State );
+            m_State = state;
+            EnterStateEventMap.FireEvent( m_State );
+        }
+    }
 
     void Start()
     {
@@ -29,12 +41,12 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        SetState( GameState.Generating );
         StartCoroutine( StartGameCoroutine() );
     }
 
     IEnumerator StartGameCoroutine()
     {
-        // Send event here.
         yield return null;
 
         var generator = Scene.Object<MapGenerator>();
@@ -48,12 +60,18 @@ public class GameManager : MonoBehaviour
 
     void StartIntro()
     {
+        SetState( GameState.Intro );
         StartCoroutine( StartIntroCoroutine() );
     }
 
     IEnumerator StartIntroCoroutine()
     {
-        if( StartIntroEvent != null ) StartIntroEvent();
         yield return new WaitForSeconds( 0.2f );
+        StartPlaying();
+    }
+
+    void StartPlaying()
+    {
+        SetState( GameState.Playing );
     }
 }
