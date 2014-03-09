@@ -9,20 +9,21 @@ public class PlayerMovement : ExtendedMonoBehaviour
     PlayerInput m_Input;
     CharacterController m_Controller;
 
+    public bool IsRunning { get; private set; }
+
     void Awake()
     {
         m_Input = Component<PlayerInput>();
         m_Controller = Component<CharacterController>();
+        IsRunning = false;
     }
 
     void FixedUpdate()
     {
-        var isRunning = m_Input.GetKey( PlayerKey.Run );
+        IsRunning = m_Input.GetKey( PlayerKey.Run );
 
-        var speed = isRunning ? m_RunSpeed : m_WalkSpeed;
-
+        var speed = IsRunning ? m_RunSpeed : m_WalkSpeed;
         var movement = m_Input.Movement();
-
         var step = new Vector3(
             movement.x * speed * Time.fixedDeltaTime,
             0f,
