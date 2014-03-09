@@ -60,14 +60,24 @@ public struct Watchable<T>
         m_NotifyEvent -= notifyHandler;
     }
 
-    static public implicit operator T( Watchable<T> watchable )
+    public void Update( Action<T> updater )
     {
-        return watchable.m_Value;
+        if( ! m_IsInitialized ) throw new InvalidOperationException(
+            "Cannot update an unintialized Watchable!"
+        );
+
+        updater( m_Value );
+        Notify();
     }
 
     static Watchable<T> Create( T value )
     {
         return new Watchable<T>( value );
+    }
+
+    static public implicit operator T( Watchable<T> watchable )
+    {
+        return watchable.m_Value;
     }
 }
 
