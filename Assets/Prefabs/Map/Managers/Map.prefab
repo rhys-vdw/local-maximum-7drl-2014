@@ -186,8 +186,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlanePrefab: {fileID: 400000, guid: fec8986d438126b4ea8152b6de8be27c, type: 2}
-  SpriteSheet: {fileID: 11400000, guid: ee7b389e217a0de41b2666489fb2449d, type: 2}
-  HeightScale: 1
+  FloorSprites: {fileID: 11400000, guid: 2c068375cc0bcce4790baff02e9a6a39, type: 2}
+  WallSprites: {fileID: 11400000, guid: 07bd03ac6d18bec4a9d582f76ebc275b, type: 2}
+  DebugSprites: {fileID: 11400000, guid: ee7b389e217a0de41b2666489fb2449d, type: 2}
+  HeightScale: 2
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

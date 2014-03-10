@@ -33,7 +33,7 @@ public class PlayerStart : MonoBehaviour
     {
         var player = Instantiate(
             PlayerPrefab,
-            transform.position,
+            transform.position + Vector3.up * 0.1f,
             Quaternion.identity ) as Player;
 
         player.Configure( Config );
