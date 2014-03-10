@@ -50,28 +50,6 @@ public class MapBuilder : MonoBehaviour
         m_FeatureParent.localPosition = Vector3.zero;
     }
 
-    TileType[,] CopyMask( TileType[,] source, int x, int y)
-    {
-        x--;
-        y--;
-        
-        TileType[,] mask = new TileType[3,3];
-        int startX = Mathf.Max( 0, x );
-        int startY = Mathf.Max( 0, y );
-        int endX = Mathf.Min( source.GetLength( 0 ), x + 3 );
-        int endY = Mathf.Min( source.GetLength( 1 ), y + 3 );
-
-        for( int u = startX; u < endX; u++ )
-        {
-            for( int v = startY; v < endY; v++ )
-            {
-                mask[u - x, v - y] = source[ u, v ];
-            }
-        }
-
-        return mask;
-    }
-
     public void Build( Map map )
     {
         m_Tiles = new Transform[map.Width, map.Height];
@@ -80,7 +58,7 @@ public class MapBuilder : MonoBehaviour
         {
             for( int x = 0; x < map.Width; x++ )
             {
-                var mask = CopyMask( map.Tiles, x, y );
+                var mask = new MapMask( map.Tiles, x - 1, y - 1 );
                 var tile = m_TileFactory.Build( "" + y + "," + x, mask );
                 tile.position = Position( x, y );
                 tile.parent = m_TileParent;

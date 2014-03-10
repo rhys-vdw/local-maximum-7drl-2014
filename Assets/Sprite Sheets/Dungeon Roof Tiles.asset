@@ -9,23 +9,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 953452e02abc3314c9caa08a71993112, type: 3}
-  m_Name: Dungeon Floor Tiles
+  m_Name: Dungeon Roof Tiles
   m_EditorClassIdentifier: 
-  Material: {fileID: 2100000, guid: 926d9d82d0789304ca58b889c92917b8, type: 2}
+  Material: {fileID: 2100000, guid: a808c269932cfd941965c7614586db26, type: 2}
   Sprites:
+  - Name: wall
+    Positions:
+    - X: 0
+      Y: 0
   - Name: floor
     Positions:
     - X: 0
       Y: 0
-    - X: 1
-      Y: 0
+  - Name: roof
+    Positions:
     - X: 2
       Y: 0
-    - X: 0
-      Y: 1
-    - X: 1
-      Y: 1
-    - X: 2
-      Y: 1
   Width: 3
-  Height: 2
+  Height: 1

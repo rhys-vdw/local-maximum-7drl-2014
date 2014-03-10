@@ -5,11 +5,17 @@ using UnityObjectRetrieval;
 public class SpriteSheet : ScriptableObject
 {
     [System.Serializable]
+    public class SpritePosition
+    {
+        public int X;
+        public int Y;
+    }
+
+    [System.Serializable]
     public class SpriteDefinition
     {
         public string Name;
-        public int X;
-        public int Y;
+        public SpritePosition[] Positions;
     }
 
     public Material Material;
@@ -25,18 +31,6 @@ public class SpriteSheet : ScriptableObject
         Apply( name, renderer, filter.mesh );
     }
 
-    public void AutoApplyRandom( Component component )
-    {
-        var renderer = component.SelfDescendants().Component<Renderer>();
-        var filter = component.SelfDescendants().Component<MeshFilter>();
-        Apply( Sprites.RandomElement(), renderer, filter.mesh );
-    }
-
-    public void ApplyRandom( Renderer renderer, Mesh mesh )
-    {
-        Apply( Sprites.RandomElement(), renderer, mesh );
-    }
-
     public void Apply( string name, Renderer renderer, Mesh mesh )
     {
         var sprite = Sprites.FirstOrDefault( s => s.Name == name );
@@ -50,6 +44,8 @@ public class SpriteSheet : ScriptableObject
 
     void Apply( SpriteDefinition sprite, Renderer renderer, Mesh mesh )
     {
+        var position = sprite.Positions.RandomElement();
+
         float sheetWidth = 1f / Width;
         float sheetHeight = 1f / Height;
 
@@ -59,8 +55,8 @@ public class SpriteSheet : ScriptableObject
         for( int i = 0; i < mesh.vertexCount; i++ )
         {
             uvs[i] = new Vector2(
-                (sprite.X + uvs[i].x) * sheetWidth,
-                (sprite.Y + uvs[i].y) * sheetHeight
+                (position.X + uvs[i].x) * sheetWidth,
+                (position.Y + uvs[i].y) * sheetHeight
             );
         }
         mesh.uv = uvs;

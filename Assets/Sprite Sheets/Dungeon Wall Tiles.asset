@@ -14,16 +14,14 @@ MonoBehaviour:
   Material: {fileID: 2100000, guid: 0344dc333acf638408021f57a4eb247b, type: 2}
   Sprites:
   - Name: wall-left-right
-    X: 0
-    Y: 0
+    Positions: []
   - Name: wall-left
-    X: 1
-    Y: 0
-  - Name: wall
-    X: 2
-    Y: 0
+    Positions: []
+  - Name: wall-center
+    Positions:
+    - X: 2
+      Y: 0
   - Name: wall-right
-    X: 3
-    Y: 0
+    Positions: []
   Width: 4
   Height: 1
