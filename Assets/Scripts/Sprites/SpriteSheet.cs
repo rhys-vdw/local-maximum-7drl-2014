@@ -1,14 +1,51 @@
 using UnityEngine;
 using System.Linq;
 using UnityObjectRetrieval;
+using System.Collections.Generic;
+using System;
+
+using RotationMap = System.Collections.Generic.Dictionary<SpriteRotation, System.Func<UnityEngine.Vector2, UnityEngine.Vector2>>;
+using RotateFunc = System.Func<UnityEngine.Vector2, UnityEngine.Vector2>;
+
+public enum SpriteRotation
+{
+    None,
+    FlipHorizontal,
+    FlipVertical,
+    RotateCW,
+    RotateCCW,
+    Rotate180,
+    Random
+}
 
 public class SpriteSheet : ScriptableObject
 {
+    readonly static RotationMap RotationFunctions = new RotationMap
+    {
+        { SpriteRotation.None,           (uv) => uv                                  },
+        { SpriteRotation.FlipHorizontal, (uv) => new Vector2( 1 - uv.x,     uv.y )   },
+        { SpriteRotation.FlipVertical,   (uv) => new Vector2(     uv.x, 1 - uv.y )   },
+        { SpriteRotation.RotateCW,       (uv) => new Vector2( 1 - uv.y,     uv.x )   },
+        { SpriteRotation.RotateCCW,      (uv) => new Vector2(     uv.y, 1 - uv.x )   },
+        { SpriteRotation.Rotate180,      (uv) => new Vector2( 1 - uv.x, 1 - uv.y )   },
+        { SpriteRotation.Random,         (uv) => RandomRotations.RandomElement()(uv) },
+    };
+
+    readonly static List<RotateFunc> RandomRotations = RotationFunctions
+        .Where( pair => pair.Key != SpriteRotation.Random )
+        .Select( pair => pair.Value )
+        .ToList();
+
     [System.Serializable]
     public class SpritePosition
     {
         public int X;
         public int Y;
+
+        public Vector2 ToVector2()
+        {
+            return new Vector2( X, Y );
+        }
     }
 
     [System.Serializable]
@@ -16,6 +53,7 @@ public class SpriteSheet : ScriptableObject
     {
         public string Name;
         public SpritePosition[] Positions;
+        public SpriteRotation Rotation;
     }
 
     public Material Material;
@@ -44,19 +82,19 @@ public class SpriteSheet : ScriptableObject
 
     void Apply( SpriteDefinition sprite, Renderer renderer, Mesh mesh )
     {
-        var position = sprite.Positions.RandomElement();
-
-        float sheetWidth = 1f / Width;
-        float sheetHeight = 1f / Height;
-
         renderer.sharedMaterial = Material;
+
+        var position = sprite.Positions.RandomElement();
+        var gridSize = new Vector2( 1f / Width, 1f / Height );
+
+        var rotateFunc = RotationFunctions[ sprite.Rotation ];
 
         var uvs = mesh.uv;
         for( int i = 0; i < mesh.vertexCount; i++ )
         {
-            uvs[i] = new Vector2(
-                (position.X + uvs[i].x) * sheetWidth,
-                (position.Y + uvs[i].y) * sheetHeight
+            uvs[i] = Vector2.Scale(
+                position.ToVector2() + rotateFunc(uvs[i]),
+                gridSize
             );
         }
         mesh.uv = uvs;
