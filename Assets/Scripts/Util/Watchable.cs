@@ -7,13 +7,13 @@ public struct Watchable<T>
 {
     T m_Value;
     event Action<T> m_NotifyEvent;
-    bool m_IsInitialized;
+    public bool IsInitialized { get; private set; }
 
     public Watchable( T value )
     {
         m_Value = value;
         m_NotifyEvent = null;
-        m_IsInitialized = true;
+        IsInitialized = true;
     }
 
     public T Value
@@ -25,9 +25,9 @@ public struct Watchable<T>
 
         set
         {
-            if( ! m_IsInitialized )
+            if( ! IsInitialized )
             {
-                m_IsInitialized = true;
+                IsInitialized = true;
             }
 
             m_Value = value;
@@ -37,8 +37,8 @@ public struct Watchable<T>
 
     public void Notify()
     {
-        if( ! m_IsInitialized ) throw new InvalidOperationException(
-            "Cannot Notify an unintialized Watchable!"
+        if( ! IsInitialized ) throw new InvalidOperationException(
+            "Unintialized Watchable cannot Notify."
         );
 
         if( m_NotifyEvent != null )
@@ -50,7 +50,7 @@ public struct Watchable<T>
     public void Watch( Action<T> notifyHandler )
     {
         m_NotifyEvent += notifyHandler;
-        if( m_IsInitialized )
+        if( IsInitialized )
         {
             notifyHandler( m_Value );
         }
@@ -63,7 +63,7 @@ public struct Watchable<T>
 
     public void Update( Action<T> updater )
     {
-        if( ! m_IsInitialized ) throw new InvalidOperationException(
+        if( ! IsInitialized ) throw new InvalidOperationException(
             "Cannot update an unintialized Watchable!"
         );
 
