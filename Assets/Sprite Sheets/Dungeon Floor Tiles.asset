@@ -27,5 +27,6 @@ MonoBehaviour:
       Y: 1
     - X: 2
       Y: 1
+    Rotation: 6
   Width: 3
   Height: 2
