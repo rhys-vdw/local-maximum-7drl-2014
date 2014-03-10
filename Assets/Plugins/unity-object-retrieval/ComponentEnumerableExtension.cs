@@ -25,8 +25,8 @@ public static class ComponentEnumerableExtension
         where TOut : Component
     {
         return components
-            .Select( c => c.GetComponent<TOut>() )
-            .FirstOrDefault( c => c != null );
+            .Select( c => c.GetComponent( typeof(TOut) ) )
+            .FirstOrDefault( c => c != null ) as TOut;
     }
 
     public static TOut Component<TIn, TOut>( this IEnumerable<TIn> components )
@@ -45,7 +45,7 @@ public static class ComponentEnumerableExtension
         where TOut : Component
     {
         return components
-            .SelectMany( t => t.GetComponents<TOut>() );
+            .SelectMany( t => t.GetComponents( typeof(TOut) ) ).Cast<TOut>();
     }
 
     // Transform

@@ -165,7 +165,7 @@ MonoBehaviour:
     ControlType: 2
     StartingItems:
       LeftHand: 
-      RightHand: 
+      RightHand: sword
       Wearable: 
       Backpack: 
   - PlayerNumber: 0

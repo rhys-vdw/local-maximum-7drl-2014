@@ -6,7 +6,7 @@ public class Sword : ExtendedMonoBehaviour, IItem
     bool m_IsSwinging = false;
     public float m_SwingLength = 0.2f;
 
-    PlayerHand m_Slot = null;
+    PlayerHand m_Hand = null;
     PlayerAnimation m_Animation;
 
     public bool IsBlockingUse
@@ -19,16 +19,16 @@ public class Sword : ExtendedMonoBehaviour, IItem
         m_Animation = Ancestors().Component<PlayerAnimation>();
     }
 
-    public void OnEquip( PlayerHand slot )
+    public void OnEquip( PlayerHand hand )
     {
-        m_Slot = slot;
-        m_Slot.TryStartUseEvent += HandleTryStartUse;
+        m_Hand = hand;
+        m_Hand.TryStartUseEvent += HandleTryStartUse;
     }
 
     public void OnUnequip()
     {
-        m_Slot = null;
-        m_Slot.TryStartUseEvent -= HandleTryStartUse;
+        m_Hand = null;
+        m_Hand.TryStartUseEvent -= HandleTryStartUse;
     }
 
     public void HandleTryStartUse()
@@ -39,7 +39,7 @@ public class Sword : ExtendedMonoBehaviour, IItem
     void Swing()
     {
         m_IsSwinging = true;
-        var name = m_Slot.Side == HandSide.Left ? "SwingSwordLeft" : "SwingSwordRight";
+        var name = m_Hand.Side == HandSide.Left ? "SwingSwordLeft" : "SwingSwordRight";
         m_Animation.Play( name, () => { m_IsSwinging = false; } );
     }
 }

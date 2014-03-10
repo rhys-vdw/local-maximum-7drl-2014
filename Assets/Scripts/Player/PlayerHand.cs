@@ -28,18 +28,24 @@ public class PlayerHand : MonoBehaviour
     public void Equip( IItem item )
     {
         // TODO: This can be a coroutine with animations and such.
-        Unequip();
+
+        Debug.Log( "equipping!", (MonoBehaviour) item );
+
+        if( Item != null ) Unequip();
         Item = item;
-        (Item as MonoBehaviour).gameObject.SetActive( false );
+
+        var component = Item as MonoBehaviour;
+        component.transform.parent = transform;
+        component.transform.localPosition = Vector3.zero;
+        component.transform.localRotation = Quaternion.identity;
+        component.gameObject.SetActive( true );
+        
         Item.OnEquip( this );
     }
 
     public void Unequip()
     {
-        if( Item != null )
-        {
-            Item.OnUnequip();
-            (Item as MonoBehaviour).gameObject.SetActive( false );
-        }
+        Item.OnUnequip();
+        (Item as MonoBehaviour).gameObject.SetActive( false );
     }
 }

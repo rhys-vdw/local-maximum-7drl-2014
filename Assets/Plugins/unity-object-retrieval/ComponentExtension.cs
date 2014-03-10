@@ -8,15 +8,15 @@ namespace UnityObjectRetrieval
 public static class ComponentExtension
 {
     public static TComponent ComponentOrNull<TComponent>( this Component component )
-        where TComponent : Component
+        where TComponent : class
     {
-        return component.GetComponent<TComponent>();
+        return component.GetComponent( typeof(TComponent) ) as TComponent;
     }
 
     public static TComponent Component<TComponent>( this Component component )
-        where TComponent : Component
+        where TComponent : class
     {
-        var c = component.GetComponent<TComponent>();
+        var c = component.GetComponent( typeof(TComponent) ) as TComponent;
         if( c == null ) {
             throw new ComponentNotFoundException( typeof( TComponent ) );
         }
@@ -26,7 +26,7 @@ public static class ComponentExtension
     public static IEnumerable<TComponent> Components<TComponent>( this Component component )
         where TComponent : Component
     {
-        return component.GetComponents<TComponent>();
+        return component.GetComponents( typeof(TComponent) ).Cast<TComponent>();
     }
 
     public static IEnumerable<Transform> Children( this Component component )

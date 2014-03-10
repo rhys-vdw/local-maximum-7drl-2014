@@ -58,10 +58,10 @@ public class PlayerInventory : ExtendedMonoBehaviour
     void HandleConfigure( PlayerConfig config )
     {
         var items = config.StartingItems;
-        TryEquip( m_LeftHandSlot,  items.LeftHand  );
-        TryEquip( m_RightHandSlot, items.RightHand );
-        TryEquip( m_BackpackSlot,  items.Backpack  );
-        TryEquip( m_WearableSlot,  items.Wearable  );
+        TryEquip( ref m_LeftHandSlot,  items.LeftHand  );
+        TryEquip( ref m_RightHandSlot, items.RightHand );
+        TryEquip( ref m_BackpackSlot,  items.Backpack  );
+        TryEquip( ref m_WearableSlot,  items.Wearable  );
 
         UpdateEquipment();
     }
@@ -97,7 +97,7 @@ public class PlayerInventory : ExtendedMonoBehaviour
         // TODO: Wearable.
     }
 
-    void TryEquip( InventoryItem slot, string name )
+    void TryEquip( ref InventoryItem slot, string name )
     {
         if( ! string.IsNullOrEmpty( name ) )
         {
@@ -105,7 +105,10 @@ public class PlayerInventory : ExtendedMonoBehaviour
                 Name = name,
                 Item = m_ItemFactory.Build( name )
             };
-            (slot.Item as MonoBehaviour).gameObject.SetActive( false );
+
+            var component = slot.Item as MonoBehaviour;
+            component.transform.parent = transform;
+            component.gameObject.SetActive( false );
        } 
     }
 
