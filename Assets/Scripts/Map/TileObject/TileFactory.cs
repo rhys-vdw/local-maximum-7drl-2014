@@ -9,7 +9,7 @@ public class TileFactory : ExtendedMonoBehaviour
 
     public SpriteSheet FloorSprites;
     public SpriteSheet WallSprites;
-    public SpriteSheet DebugSprites;
+    public SpriteSheet RoofSprites;
 
     public float HeightScale = 1f;
 
@@ -20,17 +20,15 @@ public class TileFactory : ExtendedMonoBehaviour
         Floor
     }
 
-    class TileConfig
+    class Rule
     {
-        public TileSide Side { get; private set; }
-        public string Name { get; private set; }
+        public string SpriteName { get; private set; }
         TileType[,] m_Filter;
 
-        public TileConfig( TileType[,] filter, TileSide side, string name )
+        public Rule( TileType[,] filter, string spriteName )
         {
             m_Filter = filter;
-            Side = side;
-            Name = name;
+            SpriteName = spriteName;
         }
 
         public bool IsApplicable( MapMask mask )
@@ -39,21 +37,14 @@ public class TileFactory : ExtendedMonoBehaviour
             {
                 for( int x = 0; x < 3; x++ )
                 {
-                    if( (m_Filter[x,y] & mask[y,2-x]) == 0 ) return false;
+                    if( (m_Filter[x, y] & mask[y, 2 - x]) == 0 ) return false;
                 }
             }
             return true;
         }
     }
 
-    List<TileConfig> m_TileConfigs = new List<TileConfig>();
-
-    void AddTileConfig( TileType[,] filter, TileSide side, string name )
-    {
-        m_TileConfigs.Add( new TileConfig(
-            filter, side, name
-        ) );
-    }
+    Dictionary<TileSide, Rule[]> m_Rules = new Dictionary<TileSide, Rule[]>();
 
     void InitializeMaskMap()
     {
@@ -69,53 +60,63 @@ public class TileFactory : ExtendedMonoBehaviour
         // Wildcard (any).
         var _ = (TileType) ~0;
 
-        AddTileConfig( new [,]
-            { { _, _, _ },
-              { _, B, _ },
-              { _, _, _ } },
-          TileSide.Top,
-          "roof"
-        );
+        m_Rules[ TileSide.Top ] = new []
+        {
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { _, B, _ },
+                { _, _, _ }
+            }, "roof" ),
+        };
 
-        AddTileConfig( new [,]
-            { { _, _, _ },
-              { B, B, B },
-              { _, F, _ } },
-          TileSide.Front,
-          "wall-center"
-        );
+        m_Rules[ TileSide.Front ] = new []
+        {
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { B, B, B },
+                { _, F, _ }
+            }, "wall-center" ),
 
-        AddTileConfig( new [,]
-            { { _, _, _ },
-              { F, B, B },
-              { _, F, _ } },
-          TileSide.Front,
-          "wall-left"
-        );
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { F, B, _ },
+                { F, F, _ }
+            }, "wall-left" ),
 
-        AddTileConfig( new [,]
-            { { _, _, _ },
-              { B, B, F },
-              { _, F, _ } },
-          TileSide.Front,
-          "wall-right"
-        );
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { _, B, F },
+                { _, F, F }
+            }, "wall-right" ),
 
-        AddTileConfig( new [,]
-            { { _, _, _ },
-              { F, B, F },
-              { _, F, _ } },
-          TileSide.Front,
-          "wall-left-right"
-        );
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { F, B, F },
+                { F, F, F }
+            }, "wall-left-right" ),
 
-        AddTileConfig( new [,]
-            { { _, _, _ },
-              { _, f, _ },
-              { _, _, _ } },
-          TileSide.Floor,
-          "floor"
-        );
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { _, B, _ },
+                { _, F, _ }
+            }, "wall-center" ),
+        };
+
+        m_Rules[ TileSide.Floor ] = new []
+        {
+            new Rule( new [,]
+            {
+                { _, _, _ },
+                { _, f, _ },
+                { _, _, _ }
+            }, "floor" ),
+        };
     }
 
     void Awake()
@@ -129,16 +130,12 @@ public class TileFactory : ExtendedMonoBehaviour
             string.Format( "{0}: {1}", name, mask[1,1].ToString() )
         ).transform;
 
-        foreach( var config in m_TileConfigs.Where( c => c.IsApplicable( mask ) ) )
+        foreach( var side in EnumUtil.Values<TileSide>() )
         {
-            switch( config.Side )
+            var rule = m_Rules[side].FirstOrDefault( r => r.IsApplicable( mask ) );
+            if( rule != null )
             {
-                case TileSide.Top:    AddTop(   tile, config.Name ); break;
-                case TileSide.Front:  AddFront( tile, config.Name ); break;
-                case TileSide.Floor:  AddFloor( tile, config.Name ); break;
-                default: throw new System.InvalidOperationException(
-                        "Unknown TileSide: " + config.Side
-                );
+                AddPlane( tile, side, rule.SpriteName );
             }
         }
 
@@ -153,45 +150,57 @@ public class TileFactory : ExtendedMonoBehaviour
         return tile;
     }
 
-    void AddFront( Transform tile, string name )
+    // Plane positioning stuff.
+
+    class TransformInfo
     {
-        AddPlane(
-            tile,
-            "front -> " + name,
-            new Vector3( 0f, 0.5f, -0.5f ),
-            Quaternion.Euler( 0f, 180f, 0f )
-        );
-        WallSprites.AutoApply( name, tile );
+        public Vector3 Position;
+        public Quaternion Rotation;
     }
 
-    void AddTop( Transform tile, string name )
+    static readonly Dictionary<TileSide, TransformInfo> PlaneTransformInfo = new Dictionary<TileSide, TransformInfo>
     {
-        AddPlane(
-            tile,
-            "top -> " + name,
-            new Vector3( 0f, 1f, 0f ),
-            Quaternion.Euler( 270f, 0f, 0f )
-        );
-        DebugSprites.AutoApply( name, tile );
-    }
-
-    void AddFloor( Transform tile, string name )
+        {
+            TileSide.Top,
+            new TransformInfo
+            {
+                Position = new Vector3( 0f, 1f, 0f ),
+                Rotation = Quaternion.Euler( 270f, 0f, 0f )
+            }
+        },
+        {
+            TileSide.Front,
+            new TransformInfo
+            {
+                Position = new Vector3( 0f, 0.5f, -0.5f ),
+                Rotation = Quaternion.Euler( 0f, 180f, 0f )
+            }
+        },
+        {
+            TileSide.Floor,
+            new TransformInfo
+            {
+                Position = new Vector3( 0f, 0f, 0f ),
+                Rotation = Quaternion.Euler( 270f, 0f, 0f )
+            }
+        },
+    };
+ 
+    void AddPlane( Transform tile, TileSide side, string spriteName )
     {
-        AddPlane(
-            tile,
-            "floor -> " + name,
-            new Vector3( 0f, 0f, 0f ),
-            Quaternion.Euler( 270f, 0f, 0f )
-        );
-        FloorSprites.AutoApply( name, tile );
-    } 
-
-    void AddPlane( Transform tile, string name, Vector3 position, Quaternion rotation )
-    {
+        var transformInfo = PlaneTransformInfo[ side ];
         var plane = Instantiate( PlanePrefab ) as Transform;
-        plane.name = name;
+        plane.name = string.Format( "{0}: {1}", side, spriteName );
         plane.parent = tile;
-        plane.localPosition = position;
-        plane.localRotation = rotation;
+        plane.localPosition = transformInfo.Position;
+        plane.localRotation = transformInfo.Rotation;
+
+        var sheet =
+            side == TileSide.Top ? RoofSprites :
+            side == TileSide.Floor ? FloorSprites :
+            side == TileSide.Front ? WallSprites :
+            null;
+
+        sheet.AutoApply( spriteName, tile );
     }
 }
