@@ -6,7 +6,7 @@ public class Sword : ExtendedMonoBehaviour, IItem
     bool m_IsSwinging = false;
     public float m_SwingLength = 0.2f;
 
-    PlayerHandSlot m_Slot = null;
+    PlayerHand m_Slot = null;
     PlayerAnimation m_Animation;
 
     public bool IsBlockingUse
@@ -19,7 +19,7 @@ public class Sword : ExtendedMonoBehaviour, IItem
         m_Animation = Ancestors().Component<PlayerAnimation>();
     }
 
-    public void OnEquip( PlayerHandSlot slot )
+    public void OnEquip( PlayerHand slot )
     {
         m_Slot = slot;
         m_Slot.TryStartUseEvent += HandleTryStartUse;

@@ -8,6 +8,7 @@ public class PlayerMovement : ExtendedMonoBehaviour
 
     PlayerInput m_Input;
     CharacterController m_Controller;
+    Transform m_Transform;
 
     public bool IsRunning { get; private set; }
 
@@ -15,6 +16,7 @@ public class PlayerMovement : ExtendedMonoBehaviour
     {
         m_Input = Component<PlayerInput>();
         m_Controller = Component<CharacterController>();
+        m_Transform = transform;
         IsRunning = false;
     }
 
@@ -31,5 +33,8 @@ public class PlayerMovement : ExtendedMonoBehaviour
         );
 
         m_Controller.Move( step );
+        var pos = m_Transform.position;
+        pos.y = 0f;
+        m_Transform.position = pos;
     }
 }

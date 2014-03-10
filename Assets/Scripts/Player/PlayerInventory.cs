@@ -5,45 +5,115 @@ using System.Linq;
 
 public class PlayerInventory : ExtendedMonoBehaviour
 {
-    PlayerInput m_Input;
+    class InventoryItem
+    {
+        public string Name;
+        public IItem Item;
+    }
 
-    PlayerHandSlot LeftSlot;
-    PlayerHandSlot RightSlot;
+    // Cached components.
+
+    PlayerInput m_Input;
+    PlayerHand m_LeftHand;
+    PlayerHand m_RightHand;
+
+    // Scene objects.
+
+    ItemFactory m_ItemFactory;
+
+    // Private fields.
+
+    InventoryItem m_LeftHandSlot = null;
+    InventoryItem m_RightHandSlot = null;
+    InventoryItem m_BackpackSlot = null;
+    InventoryItem m_WearableSlot = null;
+
+    // Unity event handlers.
 
     void Awake()
     {
         m_Input = Component<PlayerInput>();
-        var hands = Descendants().Components<PlayerHandSlot>();
-        LeftSlot = hands.First( h => h.Side == HandSide.Left );
-        RightSlot = hands.First( h => h.Side == HandSide.Right );
-    }
+        var hands = Descendants().Components<PlayerHand>();
+        m_LeftHand = hands.First( h => h.Side == HandSide.Left );
+        m_RightHand = hands.First( h => h.Side == HandSide.Right );
 
-    void UpdateTryStartUse( PlayerHandSlot slot, PlayerKey key )
-    {
-        if( m_Input.GetKeyDown( key ) ) slot.TryStartUse();
-    }
+        m_ItemFactory = Scene.Object<ItemFactory>();
 
-    void UpdateTryStopUse( PlayerHandSlot slot, PlayerKey key )
-    {
-        if( m_Input.GetKeyUp( key ) ) slot.TryStopUse();
-    }
-
-    bool IsUseBlocked
-    {
-        get
-        {
-            return LeftSlot.IsBlockingUse || RightSlot.IsBlockingUse;
-        }
+        Component<Player>().Config.Watch( HandleConfigure );
     }
 
     void FixedUpdate()
     {
         if( ! IsUseBlocked )
         {
-            UpdateTryStartUse( LeftSlot, PlayerKey.UseLeft );
-            UpdateTryStartUse( RightSlot, PlayerKey.UseRight );
+            if( m_Input.GetKeyDown( PlayerKey.UseLeft  ) ) m_LeftHand.TryStartUse();
+            if( m_Input.GetKeyDown( PlayerKey.UseRight ) ) m_RightHand.TryStartUse();
         }
-        UpdateTryStopUse( LeftSlot, PlayerKey.UseLeft );
-        UpdateTryStopUse( RightSlot, PlayerKey.UseRight );
+        if( m_Input.GetKeyUp( PlayerKey.UseLeft  ) ) m_LeftHand.TryStopUse();
+        if( m_Input.GetKeyUp( PlayerKey.UseRight ) ) m_RightHand.TryStopUse();
+    }
+
+    // Event handlers.
+
+    void HandleConfigure( PlayerConfig config )
+    {
+        var items = config.StartingItems;
+        TryEquip( m_LeftHandSlot,  items.LeftHand  );
+        TryEquip( m_RightHandSlot, items.RightHand );
+        TryEquip( m_BackpackSlot,  items.Backpack  );
+        TryEquip( m_WearableSlot,  items.Wearable  );
+
+        UpdateEquipment();
+    }
+
+    // Private helpers.
+
+    void UpdateEquipment()
+    {
+        // If there should be an item in the hand, and it is not the given item.
+        if( m_LeftHandSlot == null )
+        {
+            if( m_LeftHand.Item != null ) m_LeftHand.Unequip();
+        }
+        else if( m_LeftHand.Item != m_LeftHandSlot.Item )
+        {
+            m_LeftHand.Equip( m_LeftHandSlot.Item );
+        }
+
+        if( m_RightHandSlot == null )
+        {
+            if( m_RightHand.Item != null ) m_RightHand.Unequip();
+        }
+        else if( m_RightHand.Item != m_RightHandSlot.Item )
+        {
+            m_RightHand.Equip( m_RightHandSlot.Item );
+        }
+
+        if( m_BackpackSlot != null )
+        {
+            (m_BackpackSlot.Item as MonoBehaviour).gameObject.SetActive( false );
+        }
+
+        // TODO: Wearable.
+    }
+
+    void TryEquip( InventoryItem slot, string name )
+    {
+        if( ! string.IsNullOrEmpty( name ) )
+        {
+            slot = new InventoryItem {
+                Name = name,
+                Item = m_ItemFactory.Build( name )
+            };
+            (slot.Item as MonoBehaviour).gameObject.SetActive( false );
+       } 
+    }
+
+    bool IsUseBlocked
+    {
+        get
+        {
+            return m_LeftHand.IsBlockingUse || m_RightHand.IsBlockingUse;
+        }
     }
 }

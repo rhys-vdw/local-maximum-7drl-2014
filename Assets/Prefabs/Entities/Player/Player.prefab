@@ -428,6 +428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a9321a8fc11a1e49be8c484b11a095c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Number: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -547,7 +548,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.39999998
   m_Radius: .349999994
-  m_SlopeLimit: 45
+  m_SlopeLimit: 180
   m_StepOffset: .300000012
   m_SkinWidth: .0799999982
   m_MinMoveDistance: 0

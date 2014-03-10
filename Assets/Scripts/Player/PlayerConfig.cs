@@ -11,9 +11,19 @@ public enum ControlType
 }
 
 [System.Serializable]
+public class StartingItems
+{
+    public string LeftHand;
+    public string RightHand;
+    public string Wearable;
+    public string Backpack;
+}
+
+[System.Serializable]
 public class PlayerConfig
 {
+
     [HideInInspector] public int PlayerNumber;
     public ControlType ControlType;
-    public string[] StartingItems;
+    public StartingItems StartingItems;
 }

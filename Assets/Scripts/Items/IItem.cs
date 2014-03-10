@@ -8,6 +8,6 @@
 public interface IItem
 {
     bool IsBlockingUse { get; }
-    void OnEquip( PlayerHandSlot slot );
+    void OnEquip( PlayerHand slot );
     void OnUnequip();
 }
