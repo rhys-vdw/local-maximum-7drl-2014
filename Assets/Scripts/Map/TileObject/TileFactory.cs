@@ -79,10 +79,34 @@ public class TileFactory : ExtendedMonoBehaviour
 
         AddTileConfig( new [,]
             { { _, _, _ },
-              { _, B, _ },
+              { B, B, B },
               { _, F, _ } },
           TileSide.Front,
           "wall-center"
+        );
+
+        AddTileConfig( new [,]
+            { { _, _, _ },
+              { F, B, B },
+              { _, F, _ } },
+          TileSide.Front,
+          "wall-left"
+        );
+
+        AddTileConfig( new [,]
+            { { _, _, _ },
+              { B, B, F },
+              { _, F, _ } },
+          TileSide.Front,
+          "wall-right"
+        );
+
+        AddTileConfig( new [,]
+            { { _, _, _ },
+              { F, B, F },
+              { _, F, _ } },
+          TileSide.Front,
+          "wall-left-right"
         );
 
         AddTileConfig( new [,]
