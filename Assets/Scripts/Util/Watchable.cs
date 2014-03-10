@@ -2,6 +2,7 @@ using System;
 
 namespace EventTools {
 
+[System.Serializable]
 public struct Watchable<T>
 {
     T m_Value;

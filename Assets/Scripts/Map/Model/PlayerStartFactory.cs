@@ -10,10 +10,7 @@ public class PlayerStartFactory : MonoBehaviour
         var start = Instantiate( PlayerStartPrefab, position, Quaternion.identity ) as PlayerStart;
 
         var config = Scene.Object<ConfigManager>();
-
-        start.Config.PlayerNumber = playerNumber;
-        start.Config.ControlType = config.ControlTypes[playerNumber];
-
+        start.Config = config.PlayerConfigs[ playerNumber ];
         return start.transform;
     }
 }

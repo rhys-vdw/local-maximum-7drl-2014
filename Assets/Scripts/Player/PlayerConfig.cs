@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public enum ControlType
 {
     None,
@@ -11,6 +13,7 @@ public enum ControlType
 [System.Serializable]
 public class PlayerConfig
 {
-    public int PlayerNumber;
+    [HideInInspector] public int PlayerNumber;
     public ControlType ControlType;
+    public string[] StartingItems;
 }
