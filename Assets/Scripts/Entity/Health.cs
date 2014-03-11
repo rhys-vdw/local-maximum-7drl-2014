@@ -19,10 +19,11 @@ public class Health : MonoBehaviour
         {
             if( m_Current != value )
             {
-                m_Current = value;
+                int prev = m_Current;
+                m_Current = Mathf.Min( Max, value );
                 if( ChangeEvent != null )
                 {
-                    ChangeEvent( this, value );
+                    ChangeEvent( this, m_Current - prev );
                 }
             }
         }

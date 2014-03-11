@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityObjectRetrieval;
+using System;
 
 public class Sword : ExtendedMonoBehaviour
 {
@@ -7,6 +8,8 @@ public class Sword : ExtendedMonoBehaviour
 
     public string LeftAttackAnimation = "SwingSwordLeft";
     public string RightAttackAnimation = "SwingSwordRight";
+
+    public event Action<Sword> AttackEvent;
 
     Item m_Item;
     PlayerHand m_Hand = null;
@@ -49,5 +52,7 @@ public class Sword : ExtendedMonoBehaviour
         m_IsSwinging = true;
         var name = m_Hand.Side == HandSide.Left ? "SwingSwordLeft" : "SwingSwordRight";
         m_Animation.Play( name, () => { m_IsSwinging = false; } );
+
+        if( AttackEvent != null ) AttackEvent( this );
     }
 }

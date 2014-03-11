@@ -3,7 +3,7 @@ using UnityObjectRetrieval;
 
 public class PlayerAim : ExtendedMonoBehaviour
 {
-    public Transform m_Body;
+    public Transform Body;
     public float RotationSpeed = 720f;
     public float MinAim = 0.2f;
     PlayerInput m_Input;
@@ -23,8 +23,8 @@ public class PlayerAim : ExtendedMonoBehaviour
 
         if( aim != Vector2.zero )
         {
-            m_Body.rotation = Quaternion.RotateTowards(
-                m_Body.rotation,
+            Body.rotation = Quaternion.RotateTowards(
+                Body.rotation,
                 Quaternion.LookRotation( new Vector3(
                     aim.x, 0f, aim.y
                 ) ),
