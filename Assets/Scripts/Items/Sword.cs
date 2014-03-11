@@ -1,17 +1,25 @@
 using UnityEngine;
 using UnityObjectRetrieval;
 
-public class Sword : ExtendedMonoBehaviour, IItem
+public class Sword : ExtendedMonoBehaviour
 {
-    bool m_IsSwinging = false;
-    public float m_SwingLength = 0.2f;
+    public float BlockUseDuration = 0.2f;
 
+    public string LeftAttackAnimation = "SwingSwordLeft";
+    public string RightAttackAnimation = "SwingSwordRight";
+
+    Item m_Item;
     PlayerHand m_Hand = null;
     PlayerAnimation m_Animation;
 
-    public bool IsBlockingUse
+    bool m_IsSwinging = false;
+
+    void Awake()
     {
-        get { return m_IsSwinging; }
+        m_Item = Component<Item>();
+        m_Item.TryStartUseEvent += HandleTryStartUse;
+        m_Item.EquipEvent += HandleEquip;
+        m_Item.UnequipEvent += HandleUnquip;
     }
 
     void Start()
@@ -19,25 +27,25 @@ public class Sword : ExtendedMonoBehaviour, IItem
         m_Animation = Ancestors().Component<PlayerAnimation>();
     }
 
-    public void OnEquip( PlayerHand hand )
+    public void HandleEquip( PlayerHand hand )
     {
         m_Hand = hand;
-        m_Hand.TryStartUseEvent += HandleTryStartUse;
     }
 
-    public void OnUnequip()
+    public void HandleUnquip()
     {
         m_Hand = null;
-        m_Hand.TryStartUseEvent -= HandleTryStartUse;
     }
 
     public void HandleTryStartUse()
     {
-        Swing();
+        Attack();
     }
 
-    void Swing()
+    void Attack()
     {
+        m_Item.SetBlockUseTimeout( BlockUseDuration );
+
         m_IsSwinging = true;
         var name = m_Hand.Side == HandSide.Left ? "SwingSwordLeft" : "SwingSwordRight";
         m_Animation.Play( name, () => { m_IsSwinging = false; } );

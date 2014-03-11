@@ -18,10 +18,15 @@ public class ItemManager : MonoBehaviour
         Console.Logf( "Loaded {0} item definitions", m_ItemDefinitions.Count );
     }
 
+    public bool TryGetDefinition( string name, out ItemDefinition item )
+    {
+        return m_ItemDefinitions.TryGetValue( name, out item );
+    }
+
     public ItemDefinition GetDefinition( string name )
     {
         ItemDefinition item;
-        if( ! m_ItemDefinitions.TryGetValue( name, out item ) )
+        if( ! TryGetDefinition( name, out item ) )
         {
             throw new System.InvalidOperationException( string.Format(
                 "No ItemDefinition named {0} in directory */Resources/{1}.", name, ItemDefinitionPath

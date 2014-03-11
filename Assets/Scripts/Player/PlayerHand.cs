@@ -8,7 +8,7 @@ public class PlayerHand : MonoBehaviour
     public event Action TryStartUseEvent;
     public event Action TryStopUseEvent;
 
-    public IItem Item { get; private set; }
+    public Item Item { get; private set; }
 
     public bool IsBlockingUse
     {
@@ -25,7 +25,7 @@ public class PlayerHand : MonoBehaviour
         if( TryStopUseEvent != null ) TryStopUseEvent();
     }
 
-    public void Equip( IItem item )
+    public void Equip( Item item )
     {
         // TODO: This can be a coroutine with animations and such.
 
@@ -34,18 +34,18 @@ public class PlayerHand : MonoBehaviour
         if( Item != null ) Unequip();
         Item = item;
 
-        var component = Item as MonoBehaviour;
-        component.transform.parent = transform;
-        component.transform.localPosition = Vector3.zero;
-        component.transform.localRotation = Quaternion.identity;
-        component.gameObject.SetActive( true );
+        item.transform.parent = transform;
+        item.transform.localPosition = Vector3.zero;
+        item.transform.localRotation = Quaternion.identity;
+        item.gameObject.SetActive( true );
         
         Item.OnEquip( this );
     }
 
     public void Unequip()
     {
-        Item.OnUnequip();
-        (Item as MonoBehaviour).gameObject.SetActive( false );
+        Item.OnUnequip( this );
+        Item.gameObject.SetActive( false );
+        Item = null;
     }
 }

@@ -8,7 +8,7 @@ public class PlayerInventory : ExtendedMonoBehaviour
     class InventoryItem
     {
         public string Name;
-        public IItem Item;
+        public Item Item;
     }
 
     // Cached components.
@@ -42,7 +42,7 @@ public class PlayerInventory : ExtendedMonoBehaviour
         Component<Player>().Config.Watch( HandleConfigure );
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if( ! IsUseBlocked )
         {

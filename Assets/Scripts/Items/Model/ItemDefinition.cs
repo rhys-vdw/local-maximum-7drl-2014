@@ -3,7 +3,7 @@ using UnityEngine;
 public class ItemDefinition : ScriptableObject
 {
     public string Name = "Unnamed Item";
-    public GameObject ItemPrefab = null;
+    public Item ItemPrefab = null;
 
     // TODO:
     //  - Sprite
