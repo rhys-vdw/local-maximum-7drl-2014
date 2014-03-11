@@ -8,5 +8,6 @@ public enum TileType
     Blocked     = 1 << 2,
     Water       = 1 << 3,
     Lava        = 1 << 4,
-    OutOfBounds = 1 << 5
+    Destroyed   = 1 << 5,
+    OutOfBounds = 1 << 6
 }

@@ -63,6 +63,11 @@ public class SpriteSheet : ScriptableObject
         Apply( name, renderer, filter.mesh );
     }
 
+    public void Apply( string name, MeshRenderer renderer )
+    {
+        Apply( name, renderer, renderer.Component<MeshFilter>().mesh );
+    }
+
     public void Apply( string name, Renderer renderer, Mesh mesh )
     {
         var sprite = Sprites.FirstOrDefault( s => s.Name == name );

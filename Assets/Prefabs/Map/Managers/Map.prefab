@@ -149,8 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b4dabf7d9d70c242aaa4093b9a41984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WallPrefab: {fileID: 400000, guid: ac9acfed5f4e27d45b19176d7cae38b2, type: 2}
-  FloorPrefab: {fileID: 400000, guid: fd11cfa5f0e5b2b4eb5ee1084d4112a9, type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -185,18 +183,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 309b3ba0f24e0674d82835d583b5378b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlanePrefab: {fileID: 400000, guid: fec8986d438126b4ea8152b6de8be27c, type: 2}
+  TilePrefab: {fileID: 11400006, guid: 45e52e020201b6543a3f4c3e4cb901c2, type: 2}
+  HeightScale: 2
   FloorSprites: {fileID: 11400000, guid: 2c068375cc0bcce4790baff02e9a6a39, type: 2}
   WallSprites: {fileID: 11400000, guid: 07bd03ac6d18bec4a9d582f76ebc275b, type: 2}
   RoofSprites: {fileID: 11400000, guid: ee7b389e217a0de41b2666489fb2449d, type: 2}
-  HeightScale: 2
-  TileHealth: 200
-  TileShakeConfig:
-    Duration: .200000003
-    MinMagnitude: .0199999996
-    MaxMagnitude: .200000003
-    ShakeType: 1
-    EaseType: 2
+  UndergroundSprites: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

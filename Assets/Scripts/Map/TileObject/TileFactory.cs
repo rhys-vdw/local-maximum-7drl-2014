@@ -5,23 +5,13 @@ using System.Linq;
 
 public class TileFactory : ExtendedMonoBehaviour
 {
-    public Transform PlanePrefab;
+    public Tile TilePrefab;
+    public float HeightScale = 2f;
 
     public SpriteSheet FloorSprites;
     public SpriteSheet WallSprites;
     public SpriteSheet RoofSprites;
-
-    public float HeightScale = 1f;
-
-    public int TileHealth = 100;
-    public ShakeConfig TileShakeConfig;
-
-    enum TileSide
-    {
-        Top,
-        Front,
-        Floor
-    }
+    public SpriteSheet UndergroundSprites;
 
     class Rule
     {
@@ -49,8 +39,10 @@ public class TileFactory : ExtendedMonoBehaviour
 
     Dictionary<TileSide, Rule[]> m_Rules = new Dictionary<TileSide, Rule[]>();
 
-    void InitializeMaskMap()
+    static Dictionary<TileSide, Rule[]> CreateRules()
     {
+        var rules = new Dictionary<TileSide, Rule[]>();
+
         // High part requiring roof. (Blocked)
         var B = TileType.Blocked | TileType.OutOfBounds;
 
@@ -65,7 +57,7 @@ public class TileFactory : ExtendedMonoBehaviour
 
         // -- Top Rules --
 
-        m_Rules[ TileSide.Top ] = new []
+        rules[ TileSide.Top ] = new []
         {
             new Rule( new [,]
             {
@@ -77,7 +69,7 @@ public class TileFactory : ExtendedMonoBehaviour
 
         // -- Front Rules --
 
-        m_Rules[ TileSide.Front ] = new []
+        rules[ TileSide.Front ] = new []
         {
             new Rule( new [,]
             {
@@ -117,7 +109,7 @@ public class TileFactory : ExtendedMonoBehaviour
 
         // -- Front Rules --
 
-        m_Rules[ TileSide.Floor ] = new []
+        rules[ TileSide.Floor ] = new []
         {
             new Rule( new [,]
             {
@@ -126,102 +118,69 @@ public class TileFactory : ExtendedMonoBehaviour
                 { _, _, _ }
             }, "floor" ),
         };
+
+        rules[ TileSide.Underground ] = new Rule[0];
+
+        return rules;
     }
 
     void Awake()
     {
-        InitializeMaskMap();
+        m_Rules = CreateRules();
     }
 
-    public Transform Build( string name, MapMask mask )
+    public Tile Build( string name, MapMask mask )
     {
-        var tile = new GameObject(
-            string.Format( "{0}: {1}", name, mask[1,1].ToString() )
-        ).transform;
+        var tile = Instantiate( TilePrefab ) as Tile;
+        tile.name = string.Format( "Tile: {0}, {1}", name, mask[1,1].ToString() );
+        tile.transform.localScale = new Vector3( 1f, HeightScale, 1f );
+        tile.TileType.Value = mask[1,1];
 
-        var planeParent = new GameObject( "Tile Parent" ).transform;
-        planeParent.parent = tile;
-        planeParent.localPosition = Vector3.zero;
-        planeParent.localRotation = Quaternion.identity;
-
-        foreach( var side in EnumUtil.Values<TileSide>() )
-        {
-            var rule = m_Rules[side].FirstOrDefault( r => r.IsApplicable( mask ) );
-            if( rule != null )
-            {
-                AddPlane( planeParent, side, rule.SpriteName );
-            }
-        }
-
-        if( mask.Center == TileType.Blocked )
-        {
-            var collider = tile.gameObject.AddComponent<BoxCollider>();
-            collider.center = new Vector3( 0f, 0.5f, 0f );
-
-            tile.gameObject.AddComponent<Health>().Max = TileHealth;
-            tile.gameObject.AddComponent<TileDestructionController>();
-
-            var shake = tile.gameObject.AddComponent<ShakeOnDamage>();
-            shake.Config = TileShakeConfig;
-            shake.OptionalTarget = planeParent;
-        }
-
-        tile.localScale = new Vector3( 1f, HeightScale, 1f );
+        DecorateTile( tile, mask );
 
         return tile;
     }
 
-    // Plane positioning stuff.
-
-    class TransformInfo
+    public void DecorateTile( Tile tile, MapMask mask )
     {
-        public Vector3 Position;
-        public Quaternion Rotation;
+        foreach( var side in EnumUtil.Values<TileSide>() )
+        {
+            var rule = m_Rules[side].FirstOrDefault( r => r.IsApplicable( mask ) );
+            SetSprite( tile, side, rule == null ? null : rule.SpriteName );
+        }
     }
 
-    static readonly Dictionary<TileSide, TransformInfo> PlaneTransformInfo = new Dictionary<TileSide, TransformInfo>
+    void SetSprite( Tile tile, TileSide side, string spriteName )
     {
+        var planeRenderer = tile.GetPlaneMeshRenderer( side );
+        if( spriteName == null )
         {
-            TileSide.Top,
-            new TransformInfo
-            {
-                Position = new Vector3( 0f, 1f, 0f ),
-                Rotation = Quaternion.Euler( 270f, 0f, 0f )
-            }
-        },
+            planeRenderer.gameObject.SetActive( false );
+        }
+        else
         {
-            TileSide.Front,
-            new TransformInfo
-            {
-                Position = new Vector3( 0f, 0.5f, -0.5f ),
-                Rotation = Quaternion.Euler( 0f, 180f, 0f )
-            }
-        },
-        {
-            TileSide.Floor,
-            new TransformInfo
-            {
-                Position = new Vector3( 0f, 0f, 0f ),
-                Rotation = Quaternion.Euler( 270f, 0f, 0f )
-            }
-        },
-    };
- 
-    void AddPlane( Transform tile, TileSide side, string spriteName )
-    {
-        var transformInfo = PlaneTransformInfo[ side ];
-        var plane = Instantiate( PlanePrefab ) as Transform;
-        plane.name = string.Format( "{0}: {1}", side, spriteName );
-        plane.parent = tile;
-        plane.localPosition = transformInfo.Position;
-        plane.localRotation = transformInfo.Rotation;
+            planeRenderer.gameObject.SetActive( true );
+            var sheet = SpriteSheet( side );
+            sheet.Apply( spriteName, planeRenderer );
+        }
+    }
 
+    SpriteSheet SpriteSheet( TileSide side )
+    {
         var sheet =
-            side == TileSide.Top ? RoofSprites :
-            side == TileSide.Floor ? FloorSprites :
-            side == TileSide.Front ? WallSprites :
+            side == TileSide.Top         ? RoofSprites        :
+            side == TileSide.Floor       ? FloorSprites       :
+            side == TileSide.Front       ? WallSprites        :
+            side == TileSide.Underground ? UndergroundSprites :
             null;
 
-        sheet.AutoApply( spriteName, tile );
+        if( sheet == null )
+        {
+            throw new System.InvalidOperationException( string.Format(
+                "Uknown tile side: {0}", side
+            ) );
+        }
+
+        return sheet;
     }
 }

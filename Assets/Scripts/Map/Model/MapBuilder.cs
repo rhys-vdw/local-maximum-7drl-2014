@@ -6,12 +6,9 @@ using InvalidOperationException = System.InvalidOperationException;
 
 public class MapBuilder : MonoBehaviour
 {
-    public Transform WallPrefab;
-    public Transform FloorPrefab;
-
     public event Action<MapBuilder> BuildCompleteEvent;
 
-    Transform[,] m_Tiles;
+    Tile[,] m_Tiles;
     readonly Vector3 TileSize = new Vector3( 1f, 0f, 1f );
 
     // Cached components.
@@ -52,16 +49,20 @@ public class MapBuilder : MonoBehaviour
 
     public void Build( Map map )
     {
-        m_Tiles = new Transform[map.Width, map.Height];
+        m_Tiles = new Tile[map.Width, map.Height];
 
         for( int y = 0; y < map.Height; y++ )
         {
             for( int x = 0; x < map.Width; x++ )
             {
                 var mask = new MapMask( map.Tiles, x - 1, y - 1 );
+
                 var tile = m_TileFactory.Build( "" + y + "," + x, mask );
-                tile.position = Position( x, y );
-                tile.parent = m_TileParent;
+                tile.X = x; tile.Y = y;
+
+                var tileTransform = tile.transform;
+                tileTransform.position = Position( x, y );
+                tileTransform.parent = m_TileParent;
                 m_Tiles[x, y] = tile;
             }
         }
@@ -109,12 +110,5 @@ public class MapBuilder : MonoBehaviour
 
         feature.parent = m_FeatureParent;
         return feature;
-    }
-
-    Transform TilePrefab( TileType tile )
-    {
-        if( tile == TileType.Blocked ) return WallPrefab;
-        if( tile == TileType.Floor ) return FloorPrefab;
-        return null;
     }
 }
