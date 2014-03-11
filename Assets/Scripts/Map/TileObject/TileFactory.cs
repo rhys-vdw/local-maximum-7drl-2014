@@ -13,6 +13,9 @@ public class TileFactory : ExtendedMonoBehaviour
 
     public float HeightScale = 1f;
 
+    public int TileHealth = 100;
+    public ShakeConfig TileShakeConfig;
+
     enum TileSide
     {
         Top,
@@ -136,12 +139,17 @@ public class TileFactory : ExtendedMonoBehaviour
             string.Format( "{0}: {1}", name, mask[1,1].ToString() )
         ).transform;
 
+        var planeParent = new GameObject( "Tile Parent" ).transform;
+        planeParent.parent = tile;
+        planeParent.localPosition = Vector3.zero;
+        planeParent.localRotation = Quaternion.identity;
+
         foreach( var side in EnumUtil.Values<TileSide>() )
         {
             var rule = m_Rules[side].FirstOrDefault( r => r.IsApplicable( mask ) );
             if( rule != null )
             {
-                AddPlane( tile, side, rule.SpriteName );
+                AddPlane( planeParent, side, rule.SpriteName );
             }
         }
 
@@ -149,6 +157,12 @@ public class TileFactory : ExtendedMonoBehaviour
         {
             var collider = tile.gameObject.AddComponent<BoxCollider>();
             collider.center = new Vector3( 0f, 0.5f, 0f );
+
+            tile.gameObject.AddComponent<Health>().Max = TileHealth;
+            
+            var shake = tile.gameObject.AddComponent<ShakeOnDamage>();
+            shake.Config = TileShakeConfig;
+            shake.OptionalTarget = planeParent;
         }
 
         tile.localScale = new Vector3( 1f, HeightScale, 1f );

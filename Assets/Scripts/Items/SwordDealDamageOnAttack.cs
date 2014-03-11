@@ -11,14 +11,12 @@ public class SwordDealDamageOnAttack : ExtendedMonoBehaviour
     public float DamageDelay = 0f;
     public float DamageDuration = 0.2f;
 
-    PlayerHand m_Hand;
     Collider m_Collider;
 
     void Awake()
     {
         var item = Component<Item>();
         item.EquipEvent += HandleEquip;
-        item.UnequipEvent += HandleUnequip;
 
         var sword = Component<Sword>();
         sword.AttackEvent += HandleAttack;
@@ -36,8 +34,6 @@ public class SwordDealDamageOnAttack : ExtendedMonoBehaviour
 
     void HandleEquip( PlayerHand hand )
     {
-        m_Hand = hand;
-
         if( m_Collider == null )
         {
             m_Collider = CreateCollider();
@@ -47,11 +43,6 @@ public class SwordDealDamageOnAttack : ExtendedMonoBehaviour
         m_Collider.transform.localPosition = position;
     }
 
-    void HandleUnequip()
-    {
-        m_Hand = null;
-    }
-
     void HandleAttack( Sword sword )
     {
         StartCoroutine( AttackCoroutine() );
@@ -59,13 +50,13 @@ public class SwordDealDamageOnAttack : ExtendedMonoBehaviour
 
     // Unity message handlers.
 
-    void OnForwardedCollisionEnter( Collision collision )
+    void OnForwardedTriggerEnter( Collider collider )
     {
         /*
         var damageReceiver = collision.transform.SelfDescendants().ComponentOrNull<DamageReceiver>();
         damageReceiver.Damage( Damage );
         */
-        var health = collision.transform.SelfDescendants().ComponentOrNull<Health>();
+        var health = collider.SelfDescendants().ComponentOrNull<Health>();
         if( health != null )
         {
             health.Current -= Damage;
@@ -102,8 +93,11 @@ public class SwordDealDamageOnAttack : ExtendedMonoBehaviour
         var boxCollider = boxObject.AddComponent<BoxCollider>();
         boxCollider.size = new Vector3( SwingWidth, 2f, Range );
         boxCollider.center = new Vector3( 0f, 1f, Range / 2 );
+        boxCollider.isTrigger = true;
 
-        var forwarder = boxObject.AddComponent<CollisionEventForwarder>();
+        boxObject.AddComponent<Rigidbody>().isKinematic = true;
+
+        var forwarder = boxObject.AddComponent<CollisionMessageForwarder>();
         forwarder.Target = this.gameObject;
 
         boxObject.SetActive( false );

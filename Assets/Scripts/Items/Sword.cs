@@ -5,6 +5,7 @@ using System;
 public class Sword : ExtendedMonoBehaviour
 {
     public float BlockUseDuration = 0.2f;
+    public float MinAttackPeriod = 0.15f;
 
     public string LeftAttackAnimation = "SwingSwordLeft";
     public string RightAttackAnimation = "SwingSwordRight";
@@ -15,7 +16,7 @@ public class Sword : ExtendedMonoBehaviour
     PlayerHand m_Hand = null;
     PlayerAnimation m_Animation;
 
-    bool m_IsSwinging = false;
+    float m_NextAttackTime = 0f;
 
     void Awake()
     {
@@ -42,16 +43,19 @@ public class Sword : ExtendedMonoBehaviour
 
     public void HandleTryStartUse()
     {
-        Attack();
+        if( Time.time > m_NextAttackTime )
+        {
+            m_NextAttackTime = Time.time + MinAttackPeriod;
+            Attack();
+        }
     }
 
     void Attack()
     {
         m_Item.SetBlockUseTimeout( BlockUseDuration );
 
-        m_IsSwinging = true;
         var name = m_Hand.Side == HandSide.Left ? "SwingSwordLeft" : "SwingSwordRight";
-        m_Animation.Play( name, () => { m_IsSwinging = false; } );
+        m_Animation.Play( name );
 
         if( AttackEvent != null ) AttackEvent( this );
     }

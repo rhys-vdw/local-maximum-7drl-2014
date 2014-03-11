@@ -190,6 +190,13 @@ MonoBehaviour:
   WallSprites: {fileID: 11400000, guid: 07bd03ac6d18bec4a9d582f76ebc275b, type: 2}
   RoofSprites: {fileID: 11400000, guid: ee7b389e217a0de41b2666489fb2449d, type: 2}
   HeightScale: 2
+  TileHealth: 200
+  TileShakeConfig:
+    Duration: .200000003
+    MinMagnitude: .0199999996
+    MaxMagnitude: .200000003
+    ShakeType: 1
+    EaseType: 2
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
