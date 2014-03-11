@@ -60,6 +60,8 @@ public class TileFactory : ExtendedMonoBehaviour
         // Wildcard (any).
         var _ = (TileType) ~0;
 
+        // -- Top Rules --
+
         m_Rules[ TileSide.Top ] = new []
         {
             new Rule( new [,]
@@ -69,6 +71,8 @@ public class TileFactory : ExtendedMonoBehaviour
                 { _, _, _ }
             }, "roof" ),
         };
+
+        // -- Front Rules --
 
         m_Rules[ TileSide.Front ] = new []
         {
@@ -107,6 +111,8 @@ public class TileFactory : ExtendedMonoBehaviour
                 { _, F, _ }
             }, "wall-center" ),
         };
+
+        // -- Front Rules --
 
         m_Rules[ TileSide.Floor ] = new []
         {

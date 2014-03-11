@@ -13,17 +13,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Material: {fileID: 2100000, guid: a808c269932cfd941965c7614586db26, type: 2}
   Sprites:
-  - Name: wall
-    Positions:
-    - X: 0
-      Y: 0
-  - Name: floor
-    Positions:
-    - X: 0
-      Y: 0
-  - Name: roof
-    Positions:
-    - X: 2
-      Y: 0
-  Width: 3
-  Height: 1
+  - Name: roof-no-walls
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  - Name: 
+    Positions: []
+    Rotation: 0
+  Width: 7
+  Height: 2
