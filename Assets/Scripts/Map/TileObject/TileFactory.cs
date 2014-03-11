@@ -159,7 +159,8 @@ public class TileFactory : ExtendedMonoBehaviour
             collider.center = new Vector3( 0f, 0.5f, 0f );
 
             tile.gameObject.AddComponent<Health>().Max = TileHealth;
-            
+            tile.gameObject.AddComponent<TileDestructionController>();
+
             var shake = tile.gameObject.AddComponent<ShakeOnDamage>();
             shake.Config = TileShakeConfig;
             shake.OptionalTarget = planeParent;

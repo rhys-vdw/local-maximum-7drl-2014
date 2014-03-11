@@ -21,6 +21,14 @@ public class Health : MonoBehaviour
             {
                 int prev = m_Current;
                 m_Current = Mathf.Min( Max, value );
+
+                if( m_Current <= 0 && DeathEvent != null )
+                {
+                    DeathEvent( this );
+                }
+
+                // Change event is still fired on death, but after the death
+                // event so the receiver may choose to flag and ignore it.
                 if( ChangeEvent != null )
                 {
                     ChangeEvent( this, m_Current - prev );
