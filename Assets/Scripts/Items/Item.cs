@@ -15,16 +15,27 @@ public class Item : MonoBehaviour
     public event Action UnequipEvent;
 
     float m_UnblockUseTime = 0f;
+    float m_CooldownEndTime = 0f;
 
     public bool IsBlockingUse
     {
         get { return Time.time < m_UnblockUseTime; }
     }
 
+    public bool IsCoolingDown
+    {
+        get { return Time.time < m_CooldownEndTime; }
+    }
+
     // Prevent the player from using an item for a time.
     public void SetBlockUseTimeout( float duration )
     {
         m_UnblockUseTime = Time.time + duration;
+    }
+
+    public void SetCooldown( float duration )
+    {
+        m_CooldownEndTime = Time.time + duration;
     }
 
     // Forward these events on to our other components. This way they are not

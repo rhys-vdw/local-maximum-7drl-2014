@@ -15,6 +15,11 @@ public class PlayerHand : MonoBehaviour
         get { return Item != null && Item.IsBlockingUse; }
     }
 
+    public bool IsCoolingDown
+    {
+        get { return Item != null && Item.IsCoolingDown; }
+    }
+
     public void TryStartUse()
     {
         if( TryStartUseEvent != null ) TryStartUseEvent();
