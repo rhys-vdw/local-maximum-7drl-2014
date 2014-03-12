@@ -334,11 +334,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config:
-    Duration: .200000003
-    MinMagnitude: .0199999996
-    MaxMagnitude: .200000003
+    Duration: .400000006
+    MinMagnitude: {x: 0, y: 0, z: 0}
+    MaxMagnitude: {x: .200000003, y: 0, z: .200000003}
+    FrameMod: 2
     ShakeType: 1
-    EaseType: 2
+    EaseType: 21
   OptionalTarget: {fileID: 400008}
 --- !u!114 &11400006
 MonoBehaviour:

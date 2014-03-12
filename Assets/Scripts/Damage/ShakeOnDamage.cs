@@ -7,8 +7,9 @@ using IEnumerator = System.Collections.IEnumerator;
 public class ShakeConfig
 {
     public float Duration = 0.2f;
-    public float MinMagnitude = 0.02f;
-    public float MaxMagnitude = 0.2f;
+    public Vector3 MinMagnitude = Vector3.zero;
+    public Vector3 MaxMagnitude = Vector3.one;
+    public int FrameMod = 1;
     public GoShakeType ShakeType = GoShakeType.Position;
     public GoEaseType EaseType = GoEaseType.Linear;
 }
@@ -37,10 +38,10 @@ public class ShakeOnDamage : ExtendedMonoBehaviour
 
             Debug.Log( "Health is now: " + health.Current );
 
-            var magnitude = Mathf.Lerp( Config.MaxMagnitude, Config.MinMagnitude, (float) health.Current / health.Max );
+            var magnitude = Vector3.Lerp( Config.MaxMagnitude, Config.MinMagnitude, (float) health.Current / health.Max );
 
             m_Tween = Go.to( m_Target, Config.Duration, new GoTweenConfig()
-                .shake( new Vector3( magnitude, 0, magnitude ), Config.ShakeType, 1, true )
+                .shake( magnitude, Config.ShakeType, Config.FrameMod, true )
                 .setEaseType( Config.EaseType )
                 .onComplete( t => m_Target.localPosition = m_StartPosition )
             );

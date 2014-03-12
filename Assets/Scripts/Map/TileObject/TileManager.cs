@@ -55,6 +55,9 @@ public class TileManager : ExtendedMonoBehaviour
         // Actual floor.
         var f = TileType.Floor;
 
+        // Floor or block. (stone)
+        var s = TileType.Floor | TileType.Blocked;
+
         // Wildcard (any).
         var _ = (TileType) ~0;
 
@@ -127,7 +130,7 @@ public class TileManager : ExtendedMonoBehaviour
             new Rule( new [,]
             {
                 { _, _, _ },
-                { _, f, _ },
+                { _, s, _ },
                 { _, _, _ }
             }, "floor" ),
         };
