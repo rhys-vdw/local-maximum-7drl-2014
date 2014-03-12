@@ -98,8 +98,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BlockUseDuration: .200000003
+  MinAttackPeriod: .300000012
   LeftAttackAnimation: SwingSwordLeft
   RightAttackAnimation: SwingSwordRight
+  m_BlockingAttack: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

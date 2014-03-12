@@ -22,6 +22,7 @@ public class Sword : ExtendedMonoBehaviour
     {
         m_Item = Component<Item>();
         m_Item.TryStartUseEvent += HandleTryStartUse;
+        m_Item.TryStopUseEvent += HandleTryStopUse;
         m_Item.EquipEvent += HandleEquip;
         m_Item.UnequipEvent += HandleUnquip;
     }
@@ -41,13 +42,25 @@ public class Sword : ExtendedMonoBehaviour
         m_Hand = null;
     }
 
+    public bool m_BlockingAttack = false;
+
     public void HandleTryStartUse()
     {
-        if( Time.time > m_NextAttackTime )
+        if( Time.time > m_NextAttackTime && ! m_BlockingAttack )
         {
             m_NextAttackTime = Time.time + MinAttackPeriod;
             Attack();
+            m_BlockingAttack = true;
         }
+        else
+        {
+            m_BlockingAttack = true;
+        }
+    }
+
+    void HandleTryStopUse()
+    {
+        m_BlockingAttack = false;
     }
 
     void Attack()
@@ -55,7 +68,7 @@ public class Sword : ExtendedMonoBehaviour
         m_Item.SetBlockUseTimeout( BlockUseDuration );
 
         var name = m_Hand.Side == HandSide.Left ? "SwingSwordLeft" : "SwingSwordRight";
-        m_Animation.Play( name );
+        m_Animation.Play( name, MinAttackPeriod );
 
         if( AttackEvent != null ) AttackEvent( this );
     }
