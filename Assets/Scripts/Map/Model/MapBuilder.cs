@@ -11,6 +11,9 @@ public class MapBuilder : MonoBehaviour
     Tile[,] m_Tiles;
     readonly Vector3 TileSize = new Vector3( 1f, 0f, 1f );
 
+    // Store the map.
+    Map m_Map;
+
     // Cached components.
     Transform m_Transform;
 
@@ -20,7 +23,7 @@ public class MapBuilder : MonoBehaviour
 
     // Scene objects.
     PlayerStartFactory m_PlayerStartFactory;
-    TileFactory m_TileFactory;
+    TileManager m_TileManager;
 
     public float Width
     {
@@ -36,7 +39,7 @@ public class MapBuilder : MonoBehaviour
     {
         m_Transform = GetComponent<Transform>();
         m_PlayerStartFactory = Scene.Object<PlayerStartFactory>();
-        m_TileFactory = Scene.Object<TileFactory>();
+        m_TileManager = Scene.Object<TileManager>();
 
         m_TileParent = new GameObject( "Tiles" ).transform;
         m_TileParent.parent = m_Transform;
@@ -47,18 +50,45 @@ public class MapBuilder : MonoBehaviour
         m_FeatureParent.localPosition = Vector3.zero;
     }
 
+    public void SetTileType( int x, int y, TileType newType )
+    {
+        m_Map.Tiles[x, y] = newType;
+        m_Tiles[x, y].TileType.Value = newType;
+        m_Tiles[x, y].name = "Updated to: " + newType;
+
+        MaskAroundCenter( x, y ).Each( (u, v, type) => {
+            if( type != TileType.OutOfBounds ) UpdateTile( m_Tiles[x - 1 + u, y - 1 + v] );
+        } );
+    }
+
+    MapMask MaskAroundCenter( int x, int y )
+    {
+        return new MapMask( m_Map.Tiles, x - 1, y - 1 );
+    }
+
+    void UpdateTile( Tile tile )
+    {
+        var mask = MaskAroundCenter( tile.X, tile.Y );
+        m_TileManager.DecorateTile( tile, mask );
+    }
+
     public void Build( Map map )
     {
         m_Tiles = new Tile[map.Width, map.Height];
+        m_Map = map;
 
         for( int y = 0; y < map.Height; y++ )
         {
             for( int x = 0; x < map.Width; x++ )
             {
-                var mask = new MapMask( map.Tiles, x - 1, y - 1 );
+                var mask = MaskAroundCenter( x, y );
 
-                var tile = m_TileFactory.Build( "" + y + "," + x, mask );
-                tile.X = x; tile.Y = y;
+                var tile = m_TileManager.RequestTile( x, y, mask );
+
+                tile.name = string.Format(
+                    "Tile (pos=[{0},{1}] type={2})",
+                    x, y, tile.TileType.Value
+                );
 
                 var tileTransform = tile.transform;
                 tileTransform.position = Position( x, y );

@@ -185,6 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TilePrefab: {fileID: 11400006, guid: 45e52e020201b6543a3f4c3e4cb901c2, type: 2}
   HeightScale: 2
+  PlaneMesh: {fileID: 4300000, guid: a50205533e4c01742868762bf0b84dbb, type: 3}
   FloorSprites: {fileID: 11400000, guid: 2c068375cc0bcce4790baff02e9a6a39, type: 2}
   WallSprites: {fileID: 11400000, guid: 07bd03ac6d18bec4a9d582f76ebc275b, type: 2}
   RoofSprites: {fileID: 11400000, guid: ee7b389e217a0de41b2666489fb2449d, type: 2}

@@ -3,6 +3,7 @@ using System.Linq;
 using UnityObjectRetrieval;
 using System.Collections.Generic;
 using System;
+using Random = UnityEngine.Random;
 
 // using RotationMap = Dictionary<SpriteRotation, Func<Vector2, Vector2>>;
 using RotationMap = System.Collections.Generic.Dictionary<SpriteRotation, System.Func<UnityEngine.Vector2, UnityEngine.Vector2>>;
@@ -56,19 +57,7 @@ public class SpriteSheet : ScriptableObject
     public int Width = 1;
     public int Height = 1;
 
-    public void AutoApply( string name, Component component )
-    {
-        var renderer = component.SelfDescendants().Component<Renderer>();
-        var filter = component.SelfDescendants().Component<MeshFilter>();
-        Apply( name, renderer, filter.mesh );
-    }
-
-    public void Apply( string name, MeshRenderer renderer )
-    {
-        Apply( name, renderer, renderer.Component<MeshFilter>().mesh );
-    }
-
-    public void Apply( string name, Renderer renderer, Mesh mesh )
+    public void Apply( string name, Renderer renderer, Mesh mesh, int randomSeed )
     {
         var sprite = Sprites.FirstOrDefault( s => s.Name == name );
 
@@ -76,11 +65,13 @@ public class SpriteSheet : ScriptableObject
             string.Format( "Could not find sprite named: '{0}'", name )
         );
 
-        Apply( sprite, renderer, mesh );
+        Apply( sprite, renderer, mesh, randomSeed );
     }
 
-    void Apply( SpriteDefinition sprite, Renderer renderer, Mesh mesh )
+    void Apply( SpriteDefinition sprite, Renderer renderer, Mesh mesh, int randomSeed )
     {
+        Random.seed = randomSeed;
+
         renderer.sharedMaterial = Material;
 
         var position = sprite.Positions.RandomElement();

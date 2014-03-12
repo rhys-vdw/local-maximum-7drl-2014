@@ -27,6 +27,7 @@ public class DestructibleTileController : ExtendedMonoBehaviour
 
     void HandleDeathEvent( Health health )
     {
-        Destroy( gameObject );
+        var tile = Component<Tile>();
+        Scene.Object<MapBuilder>().SetTileType( tile.X, tile.Y, TileType.Destroyed );
     }
 }

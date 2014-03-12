@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 public class MapMask
 {
     int m_Left;
@@ -28,6 +31,32 @@ public class MapMask
             }
             return m_Map[ x + m_Left, y + m_Top ];
         }
+    }
+
+    public void Each( Action<int, int, TileType> operation )
+    {
+        for( int y = 0; y < 3; y++ )
+        {
+            for( int x = 0; x < 3; x++ )
+            {
+                operation( x, y, this[x, y] );
+            }
+        }
+    }
+
+    public override string ToString()
+    {
+        List<string> args = new List<string>();
+        Each( (x, y, type) => { args.Add( type.ToString() ); } );
+        args.Add( m_Left.ToString() );
+        args.Add( m_Top.ToString() );
+
+        return string.Format(
+@"Mask. Corner: ({9}, {10})
+{0}, {1}, {2},
+{3}, {4}, {5},
+{6}, {7}, {8}", args.ToArray()
+        );
     }
 
     /*

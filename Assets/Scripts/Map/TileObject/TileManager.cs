@@ -3,15 +3,18 @@ using UnityObjectRetrieval;
 using System.Collections.Generic;
 using System.Linq;
 
-public class TileFactory : ExtendedMonoBehaviour
+public class TileManager : ExtendedMonoBehaviour
 {
     public Tile TilePrefab;
     public float HeightScale = 2f;
+    public Mesh PlaneMesh;
 
     public SpriteSheet FloorSprites;
     public SpriteSheet WallSprites;
     public SpriteSheet RoofSprites;
     public SpriteSheet UndergroundSprites;
+
+    int m_BaseSeed;
 
     class Rule
     {
@@ -47,13 +50,16 @@ public class TileFactory : ExtendedMonoBehaviour
         var B = TileType.Blocked | TileType.OutOfBounds;
 
         // Walkable (low).
-        var F = TileType.Floor | TileType.Water | TileType.None | TileType.Lava;
+        var F = TileType.Floor | TileType.Water | TileType.None | TileType.Lava | TileType.Destroyed;
 
         // Actual floor.
         var f = TileType.Floor;
 
         // Wildcard (any).
         var _ = (TileType) ~0;
+
+        // Destroyed.
+        var d = TileType.Destroyed;
 
         // -- Top Rules --
 
@@ -114,6 +120,13 @@ public class TileFactory : ExtendedMonoBehaviour
             new Rule( new [,]
             {
                 { _, _, _ },
+                { _, d, _ },
+                { _, _, _ }
+            }, "floor" ),
+
+            new Rule( new [,]
+            {
+                { _, _, _ },
                 { _, f, _ },
                 { _, _, _ }
             }, "floor" ),
@@ -126,19 +139,27 @@ public class TileFactory : ExtendedMonoBehaviour
 
     void Awake()
     {
+        m_BaseSeed = System.DateTime.Now.Millisecond;
         m_Rules = CreateRules();
     }
 
-    public Tile Build( string name, MapMask mask )
+    // TODO: Pool tiles.
+    public Tile RequestTile( int x, int y, MapMask mask )
     {
         var tile = Instantiate( TilePrefab ) as Tile;
-        tile.name = string.Format( "Tile: {0}, {1}", name, mask[1,1].ToString() );
         tile.transform.localScale = new Vector3( 1f, HeightScale, 1f );
-        tile.TileType.Value = mask[1,1];
 
+        tile.TileType.Value = mask[1,1];
+        tile.X = x;
+        tile.Y = y;
         DecorateTile( tile, mask );
 
         return tile;
+    }
+
+    public void ReturnTile( Tile tile )
+    {
+        Destroy( tile.gameObject );
     }
 
     public void DecorateTile( Tile tile, MapMask mask )
@@ -159,9 +180,13 @@ public class TileFactory : ExtendedMonoBehaviour
         }
         else
         {
+            int seed = m_BaseSeed + tile.X * 23 + tile.Y * 7;
+
             planeRenderer.enabled = true;
+            var planeMeshFilter = planeRenderer.Component<MeshFilter>();
+            planeMeshFilter.sharedMesh = PlaneMesh;
             var sheet = SpriteSheet( side );
-            sheet.Apply( spriteName, planeRenderer );
+            sheet.Apply( spriteName, planeRenderer, planeMeshFilter.mesh, seed );
         }
     }
 
