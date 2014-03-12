@@ -155,11 +155,11 @@ public class TileFactory : ExtendedMonoBehaviour
         var planeRenderer = tile.GetPlaneMeshRenderer( side );
         if( spriteName == null )
         {
-            planeRenderer.gameObject.SetActive( false );
+            planeRenderer.enabled = false;
         }
         else
         {
-            planeRenderer.gameObject.SetActive( true );
+            planeRenderer.enabled = true;
             var sheet = SpriteSheet( side );
             sheet.Apply( spriteName, planeRenderer );
         }
