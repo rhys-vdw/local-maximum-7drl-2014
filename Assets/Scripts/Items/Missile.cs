@@ -30,7 +30,7 @@ public class Missile : ExtendedMonoBehaviour
 
     void OnCollisionEnter( Collision collision )
     {
-        var health = collision.transform.SelfDescendants().ComponentOrNull<Health>();
+        var health = collision.transform.SelfAncestors().ComponentOrNull<Health>();
         if( health != null )
         {
             health.Current -= Damage;

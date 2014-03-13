@@ -53,7 +53,7 @@ public class MapBuilder : MonoBehaviour
     public void SetTileType( int x, int y, TileType newType )
     {
         m_Map.Tiles[x, y] = newType;
-        m_Tiles[x, y].TileType.Value = newType;
+        m_Tiles[x, y].Type.Value = newType;
         m_Tiles[x, y].name = "Updated to: " + newType;
 
         MaskAroundCenter( x, y ).Each( (u, v, type) => {
@@ -87,7 +87,7 @@ public class MapBuilder : MonoBehaviour
 
                 tile.name = string.Format(
                     "Tile (pos=[{0},{1}] type={2})",
-                    x, y, tile.TileType.Value
+                    x, y, tile.Type.Value
                 );
 
                 var tileTransform = tile.transform;

@@ -152,7 +152,7 @@ public class TileManager : ExtendedMonoBehaviour
         var tile = Instantiate( TilePrefab ) as Tile;
         tile.transform.localScale = new Vector3( 1f, HeightScale, 1f );
 
-        tile.TileType.Value = mask[1,1];
+        tile.Type.Value = mask[1,1];
         tile.X = x;
         tile.Y = y;
         DecorateTile( tile, mask );

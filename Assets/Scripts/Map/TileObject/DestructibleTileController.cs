@@ -7,21 +7,21 @@ public class DestructibleTileController : ExtendedMonoBehaviour
 {
     void Start()
     {
-        Component<Tile>().TileType.Watch( HandleTypeChanged );
+        Component<Tile>().Type.Watch( HandleTypeChanged );
         Component<Health>().DeathEvent += HandleDeathEvent;
     }
 
     void HandleTypeChanged( TileType type )
     {
+        var health = Component<Health>();
         if( type == TileType.Blocked )
         {
-            Component<Collider>().enabled = true;
-            var health = Component<Health>();
+            health.enabled = true;
             health.Current = health.Max;
         }
         else
         {
-            Component<Collider>().enabled = false;
+            health.enabled = false;
         }
     }
 

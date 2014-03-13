@@ -14,7 +14,21 @@ public class Tile : MonoBehaviour
     public MeshRenderer Front;
     public MeshRenderer Underground;
 
-    public Watchable<TileType> TileType = new Watchable<TileType>();
+    public BoxCollider WallCollider;
+    public BoxCollider FloorCollider;
+
+    public Watchable<TileType> Type = new Watchable<TileType>();
+
+    void Awake()
+    {
+        Type.Watch( HandleTileTypeChanged );
+    }
+
+    void HandleTileTypeChanged( TileType type )
+    {
+        FloorCollider.enabled = !(type == TileType.None);
+        WallCollider.enabled = type == TileType.Blocked;
+    }
 
     public MeshRenderer GetPlaneMeshRenderer( TileSide side )
     {
