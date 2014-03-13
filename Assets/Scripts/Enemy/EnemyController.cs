@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
-using UnityObjectRetrieval;
 using System.Collections.Generic;
 using IEnumerator = System.Collections.IEnumerator;
 using System.Linq;
+using Pathfinding;
+using UnityObjectRetrieval;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : ExtendedMonoBehaviour
 {
+    public LayerMask PlayerMask = ~0;
     public float DetectionRadius = 5f;
     public float DetectionPeriod = 2f;
 
@@ -13,11 +15,13 @@ public class EnemyController : MonoBehaviour
     List<Player> m_PlayersDetected = null;
 
     Transform m_Transform;
-    LayerMask PlayerMask = ~0;
+    Seeker m_Seeker;
+
 
     void Awake()
     {
         m_Transform = transform;
+        m_Seeker = Component<Seeker>();
     }
 
     void Start()

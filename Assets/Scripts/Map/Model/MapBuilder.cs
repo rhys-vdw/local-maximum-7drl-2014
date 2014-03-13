@@ -9,7 +9,7 @@ public class MapBuilder : MonoBehaviour
     public event Action<MapBuilder> BuildCompleteEvent;
 
     Tile[,] m_Tiles;
-    readonly Vector3 TileSize = new Vector3( 1f, 0f, 1f );
+    public readonly float TileSize = 1f;
 
     // Store the map.
     Map m_Map;
@@ -25,14 +25,29 @@ public class MapBuilder : MonoBehaviour
     PlayerStartFactory m_PlayerStartFactory;
     TileManager m_TileManager;
 
+    public Vector3 Center
+    {
+        get { return new Vector3( Width / 2, 0f, Length / 2 ); }
+    }
+
+    public int Columns
+    {
+        get { return m_Tiles.GetLength( 0 ); }
+    }
+
+    public int Rows
+    {
+        get { return m_Tiles.GetLength( 1 ); }
+    }
+
     public float Width
     {
-        get { return m_Tiles.GetLength( 0 ) * TileSize.x; }
+        get { return m_Tiles.GetLength( 0 ) * TileSize; }
     }
 
     public float Length
     {
-        get { return m_Tiles.GetLength( 1 ) * TileSize.z; }
+        get { return m_Tiles.GetLength( 1 ) * TileSize; }
     }
 
     void Awake()
@@ -119,10 +134,7 @@ public class MapBuilder : MonoBehaviour
 
     Vector3 Position( int x, int y )
     {
-        return m_Transform.position + Vector3.Scale(
-            TileSize,
-            new Vector3( x, 0, y )
-        );
+        return m_Transform.position + new Vector3( x * TileSize, 0, y * TileSize );
     }
 
     Transform AddFeature( FeatureType featureType, Vector3 position )
