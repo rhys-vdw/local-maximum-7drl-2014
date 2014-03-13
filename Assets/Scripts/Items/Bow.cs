@@ -6,7 +6,9 @@ using IEnumerator = System.Collections.IEnumerator;
 public class Bow : ExtendedMonoBehaviour
 {
     public float m_CooldownTime = 1f;
+    public float m_MinCharge = 0.1f;
     MissileAttack m_Attack;
+    Item m_Item;
 
     bool m_IsCharging = false;
     float m_ChargeTime = 0.5f;
@@ -16,21 +18,20 @@ public class Bow : ExtendedMonoBehaviour
     {
         m_Attack = Component<MissileAttack>();
 
-        var item = Component<Item>();
-        item.TryStartUseEvent += HandleTryStartUse;
-        item.TryStopUseEvent += HandleTryStopUse;
+        m_Item = Component<Item>();
+        m_Item.HoldUseEvent += HandleHoldUse;
+        m_Item.StopUseEvent += HandleStopUse;
     }
 
     void Update()
     {
         if( m_IsCharging )
         {
-            Debug.Log( "Charging -- " + m_Charge );
             m_Charge += (1f / m_ChargeTime) * Time.deltaTime;
         }
     }
 
-    void HandleTryStartUse()
+    void HandleHoldUse()
     {
         if( ! m_IsCharging )
         {
@@ -39,12 +40,16 @@ public class Bow : ExtendedMonoBehaviour
         }
     }
 
-    void HandleTryStopUse()
+    void HandleStopUse()
     {
-        // TODO: Alter damage/speed etc based on charge.
-        m_Attack.Attack();
+        if( m_IsCharging && m_Charge > m_MinCharge )
+        {
+            // TODO: Alter damage/speed etc based on charge.
+            m_Attack.Attack();
+            m_Item.SetCoolDownTimeout( m_CooldownTime );
 
-        m_Charge = 0f;
-        m_IsCharging = false;
+            m_Charge = 0f;
+            m_IsCharging = false;
+        }
     }
 }

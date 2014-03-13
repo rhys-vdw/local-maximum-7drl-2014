@@ -5,9 +5,6 @@ public class PlayerHand : MonoBehaviour
 {
     public HandSide Side = HandSide.Left;
 
-    public event Action TryStartUseEvent;
-    public event Action TryStopUseEvent;
-
     public Item Item { get; private set; }
 
     public bool IsBlockingUse
@@ -22,12 +19,18 @@ public class PlayerHand : MonoBehaviour
 
     public void TryStartUse()
     {
-        if( TryStartUseEvent != null ) TryStartUseEvent();
+        if( Item != null ) Item.TryStartUse();
+    }
+
+    public void TryHoldUse()
+    {
+        if( Item != null ) Item.TryHoldUse();
     }
 
     public void TryStopUse()
     {
-        if( TryStopUseEvent != null ) TryStopUseEvent();
+        Debug.Log( name + " TRY STOP" );
+        if( Item != null ) Item.TryStopUse();
     }
 
     public void Equip( Item item )

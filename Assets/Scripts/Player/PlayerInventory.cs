@@ -48,6 +48,9 @@ public class PlayerInventory : ExtendedMonoBehaviour
         {
             if( m_Input.GetKeyDown( PlayerKey.UseLeft  ) ) m_LeftHand.TryStartUse();
             if( m_Input.GetKeyDown( PlayerKey.UseRight ) ) m_RightHand.TryStartUse();
+
+            if( m_Input.GetKey( PlayerKey.UseLeft  ) ) m_LeftHand.TryHoldUse();
+            if( m_Input.GetKey( PlayerKey.UseRight ) ) m_RightHand.TryHoldUse();
         }
         if( m_Input.GetKeyUp( PlayerKey.UseLeft  ) ) m_LeftHand.TryStopUse();
         if( m_Input.GetKeyUp( PlayerKey.UseRight ) ) m_RightHand.TryStopUse();
