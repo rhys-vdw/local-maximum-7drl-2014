@@ -16,7 +16,6 @@ public class Sword : ExtendedMonoBehaviour
     PlayerHand m_Hand = null;
     PlayerAnimation m_Animation;
 
-    float m_NextAttackTime = 0f;
     void Awake()
     {
         m_Item = Component<Item>();
