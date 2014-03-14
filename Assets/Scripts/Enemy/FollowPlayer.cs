@@ -42,7 +42,10 @@ public class FollowPlayer : ExtendedMonoBehaviour
 
     void RetrackPath()
     {
-        m_PathFollower.RetrackPath();
+        if( m_Target != null )
+        {
+            m_PathFollower.Go( m_Target.position );
+        }
     }
 
     void DetectPlayers()
@@ -53,7 +56,7 @@ public class FollowPlayer : ExtendedMonoBehaviour
             m_Target = playerColliders.Select( c => c.transform ).ClosestOrNull( m_Transform.position );
             if( m_Target != null )
             {
-                m_PathFollower.Target = m_Target;
+                m_PathFollower.Go( m_Target.position );
                 m_TargetHealth = m_Target.SelfAncestors().Component<Health>();
                 m_TargetHealth.DeathEvent += HandleTargetDeath;
             }

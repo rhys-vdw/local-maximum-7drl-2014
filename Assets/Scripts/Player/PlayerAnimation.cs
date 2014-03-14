@@ -9,19 +9,24 @@ public class PlayerAnimation : ExtendedMonoBehaviour
 
     void Awake()
     {
-        m_Animation = SelfDescendants().Component<Animation>();
+        //m_Animation = SelfDescendants().Component<Animation>();
     }
 
     public void Play( string animationName, float duration, Action onComplete = null )
     {
+        Play( animationName, onComplete );
+        /*
         float speed = m_Animation[animationName].length / duration;
         Debug.Log( "speed = " + speed );
         m_Animation[animationName].speed = speed;
         Play( animationName, onComplete );
+        */
     }
 
     public void Play( string animationName, Action onComplete = null )
     {
+        onComplete();
+        /*
         if( onComplete != null )
         {
             StartCoroutine( PlayAnimationCoroutine( animationName, onComplete ) );
@@ -30,6 +35,7 @@ public class PlayerAnimation : ExtendedMonoBehaviour
         {
             m_Animation.Play( animationName );
         }
+        */
     }
 
     IEnumerator PlayAnimationCoroutine( string animationName, Action onComplete )

@@ -12,7 +12,7 @@ public class PathFollower : ExtendedMonoBehaviour
 
     public event Action<PathFollower> ReachedEndOfPathEvent;
 
-    Transform m_Target;
+    Vector3 m_Target;
     Path m_Path;
     float m_Speed = 0f;
     int m_CurrentWaypoint = 0;
@@ -20,7 +20,7 @@ public class PathFollower : ExtendedMonoBehaviour
 
     // Cached components.
 
-    Vector3 m_Target;
+    Transform m_Transform;
     Seeker m_Seeker;
     CharacterController m_Controller;
 
@@ -31,10 +31,13 @@ public class PathFollower : ExtendedMonoBehaviour
         m_Controller = Component<CharacterController>();
     }
 
-    public void Go( Vector target )
+    public void Go( Vector3 target )
     {
         m_Target = target;
-        RetrackPath();
+        m_Seeker.StartPath( m_Transform.position, m_Target, (p) => {
+            m_Path = p;
+            m_CurrentWaypoint = 0;
+        } );
     }
 
     public void Stop()
@@ -62,21 +65,6 @@ public class PathFollower : ExtendedMonoBehaviour
                     ReachedEndOfPathEvent( this );
                 }
             }
-        }
-    }
-
-    public void RetrackPath()
-    {
-        if( m_Target == null )
-        {
-            m_Path = null;
-        }
-        else
-        {
-            m_Seeker.StartPath( m_Transform.position, m_Target, (p) => {
-                m_Path = p;
-                m_CurrentWaypoint = 0;
-            } );
         }
     }
 }
